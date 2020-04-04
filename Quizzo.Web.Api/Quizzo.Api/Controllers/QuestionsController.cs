@@ -1,13 +1,12 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Threading.Tasks;
-using AutoMapper;
-using Microsoft.AspNetCore.Http;
+﻿using AutoMapper;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
 using Quizzo.Api.DTOs;
 using Quizzo.Api.Models;
+using System;
+using System.Collections.Generic;
+using System.Linq;
+using System.Threading.Tasks;
 
 namespace Quizzo.Api.Controllers
 {
@@ -33,6 +32,7 @@ namespace Quizzo.Api.Controllers
 
         // GET: api/Questions/5
         [HttpGet("{id}")]
+        [ApiExplorerSettings(IgnoreApi = true)]
         public async Task<ActionResult<Question>> GetQuestion(Guid id)
         {
             var question = await _context.Questions.FindAsync(id);
@@ -49,6 +49,7 @@ namespace Quizzo.Api.Controllers
         // To protect from overposting attacks, please enable the specific properties you want to bind to, for
         // more details see https://aka.ms/RazorPagesCRUD.
         [HttpPut("{id}")]
+        [ApiExplorerSettings(IgnoreApi = true)]
         public async Task<IActionResult> PutQuestion(Guid id, Question question)
         {
             if (id != question.Id)
@@ -85,7 +86,7 @@ namespace Quizzo.Api.Controllers
         {
             var question = _mapper.Map<Question>(questionDto);
 
-            var quizRoom = await _context.QuizRooms.Include(c => c.Questions).SingleAsync(c => c.RoomCode == roomCode);
+            var quizRoom = await _context.QuizRooms.Include(q => q.Questions).SingleAsync(q => q.RoomCode == roomCode);
            
             quizRoom.Questions.Add(question);
             await _context.SaveChangesAsync();
@@ -95,6 +96,7 @@ namespace Quizzo.Api.Controllers
 
         // DELETE: api/Questions/5
         [HttpDelete("{id}")]
+        [ApiExplorerSettings(IgnoreApi = true)]
         public async Task<ActionResult<Question>> DeleteQuestion(Guid id)
         {
             var question = await _context.Questions.FindAsync(id);

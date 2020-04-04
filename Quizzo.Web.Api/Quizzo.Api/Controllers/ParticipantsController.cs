@@ -1,11 +1,12 @@
-﻿using System;
+﻿using AutoMapper;
+using Microsoft.AspNetCore.Mvc;
+using Microsoft.EntityFrameworkCore;
+using Quizzo.Api.DTOs;
+using Quizzo.Api.Models;
+using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
-using Microsoft.AspNetCore.Http;
-using Microsoft.AspNetCore.Mvc;
-using Microsoft.EntityFrameworkCore;
-using Quizzo.Api.Models;
 
 namespace Quizzo.Api.Controllers
 {
@@ -14,14 +15,17 @@ namespace Quizzo.Api.Controllers
     public class ParticipantsController : ControllerBase
     {
         private readonly QuizzoContext _context;
+        private readonly IMapper _mapper;
 
-        public ParticipantsController(QuizzoContext context)
+        public ParticipantsController(QuizzoContext context, IMapper mapper)
         {
             _context = context;
+            _mapper = mapper;
         }
 
         // GET: api/Participants
         [HttpGet]
+        [ApiExplorerSettings(IgnoreApi = true)]
         public async Task<ActionResult<IEnumerable<Participant>>> GetParticipants()
         {
             return await _context.Participants.ToListAsync();
@@ -29,6 +33,7 @@ namespace Quizzo.Api.Controllers
 
         // GET: api/Participants/5
         [HttpGet("{id}")]
+        [ApiExplorerSettings(IgnoreApi = true)]
         public async Task<ActionResult<Participant>> GetParticipant(Guid id)
         {
             var participant = await _context.Participants.FindAsync(id);
@@ -45,6 +50,7 @@ namespace Quizzo.Api.Controllers
         // To protect from overposting attacks, please enable the specific properties you want to bind to, for
         // more details see https://aka.ms/RazorPagesCRUD.
         [HttpPut("{id}")]
+        [ApiExplorerSettings(IgnoreApi = true)]
         public async Task<IActionResult> PutParticipant(Guid id, Participant participant)
         {
             if (id != participant.Id)
@@ -76,10 +82,14 @@ namespace Quizzo.Api.Controllers
         // POST: api/Participants
         // To protect from overposting attacks, please enable the specific properties you want to bind to, for
         // more details see https://aka.ms/RazorPagesCRUD.
-        [HttpPost]
-        public async Task<ActionResult<Participant>> PostParticipant(Participant participant)
+        [HttpPost("{roomCode}/PostParticipant")]
+        public async Task<ActionResult<Participant>> PostParticipant(string roomCode, ParticipantDto participantDto)
         {
-            _context.Participants.Add(participant);
+            var participant = _mapper.Map<Participant>(participantDto);
+
+            var quizRoom = await _context.QuizRooms.Include(q => q.Participants).SingleAsync(q => q.RoomCode == roomCode);
+
+            quizRoom.Participants.Add(participant);
             await _context.SaveChangesAsync();
 
             return CreatedAtAction("GetParticipant", new { id = participant.Id }, participant);
@@ -87,6 +97,7 @@ namespace Quizzo.Api.Controllers
 
         // DELETE: api/Participants/5
         [HttpDelete("{id}")]
+        [ApiExplorerSettings(IgnoreApi = true)]
         public async Task<ActionResult<Participant>> DeleteParticipant(Guid id)
         {
             var participant = await _context.Participants.FindAsync(id);
