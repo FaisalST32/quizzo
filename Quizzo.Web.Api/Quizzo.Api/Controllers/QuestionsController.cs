@@ -2,9 +2,11 @@
 using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
+using AutoMapper;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
+using Quizzo.Api.DTOs;
 using Quizzo.Api.Models;
 
 namespace Quizzo.Api.Controllers
@@ -14,10 +16,12 @@ namespace Quizzo.Api.Controllers
     public class QuestionsController : ControllerBase
     {
         private readonly QuizzoContext _context;
+        private readonly IMapper _mapper;
 
-        public QuestionsController(QuizzoContext context)
+        public QuestionsController(QuizzoContext context, IMapper mapper)
         {
             _context = context;
+            _mapper = mapper;
         }
 
         // GET: api/Questions
@@ -76,10 +80,14 @@ namespace Quizzo.Api.Controllers
         // POST: api/Questions
         // To protect from overposting attacks, please enable the specific properties you want to bind to, for
         // more details see https://aka.ms/RazorPagesCRUD.
-        [HttpPost]
-        public async Task<ActionResult<Question>> PostQuestion(Question question)
+        [HttpPost("{roomCode}/PostQuestion")]
+        public async Task<ActionResult<Question>> PostQuestion(string roomCode, QuestionDto questionDto)
         {
-            _context.Questions.Add(question);
+            var question = _mapper.Map<Question>(questionDto);
+
+            var quizRoom = await _context.QuizRooms.Include(c => c.Questions).SingleAsync(c => c.RoomCode == roomCode);
+           
+            quizRoom.Questions.Add(question);
             await _context.SaveChangesAsync();
 
             return CreatedAtAction("GetQuestion", new { id = question.Id }, question);
