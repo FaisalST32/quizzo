@@ -1,6 +1,6 @@
 ﻿using Microsoft.EntityFrameworkCore;
 
-namespace Quizzo.Models
+namespace Quizzo.Api.Models
 {
     public class QuizzoContext : DbContext
     {
@@ -9,9 +9,10 @@ namespace Quizzo.Models
         {
         }
 
-        public DbSet<Quiz> Quizzes { get; set; }
+        public DbSet<QuizRoom> QuizRooms { get; set; }
         public DbSet<Question> Questions { get; set; }
         public DbSet<Answer> Answers { get; set; }
         public DbSet<Participant> Participants { get; set; }
+        public DbSet<Response> Responses { get; set; }
     }
 }

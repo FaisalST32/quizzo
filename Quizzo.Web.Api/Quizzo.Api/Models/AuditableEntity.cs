@@ -1,7 +1,7 @@
 ﻿using System;
 using System.ComponentModel.DataAnnotations;
 
-namespace Quizzo.Models
+namespace Quizzo.Api.Models
 {
     public class AuditableEntity : IAuditableEntity
     {
