@@ -1,6 +1,6 @@
 ﻿using System.Collections.Generic;
 
-namespace Quizzo.Models
+namespace Quizzo.Api.Models
 {
     public class Quiz : AuditableEntity
     {

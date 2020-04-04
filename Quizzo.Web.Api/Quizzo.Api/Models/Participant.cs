@@ -1,4 +1,4 @@
-﻿namespace Quizzo.Models
+﻿namespace Quizzo.Api.Models
 {
     public class Participant : AuditableEntity
     {

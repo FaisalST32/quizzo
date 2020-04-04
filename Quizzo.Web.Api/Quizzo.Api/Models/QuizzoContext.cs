@@ -1,6 +1,6 @@
 ﻿using Microsoft.EntityFrameworkCore;
 
-namespace Quizzo.Models
+namespace Quizzo.Api.Models
 {
     public class QuizzoContext : DbContext
     {

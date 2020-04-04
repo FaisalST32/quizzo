@@ -1,6 +1,6 @@
 using System;
 
-namespace Quizzo
+namespace Quizzo.Api
 {
     public class WeatherForecast
     {
