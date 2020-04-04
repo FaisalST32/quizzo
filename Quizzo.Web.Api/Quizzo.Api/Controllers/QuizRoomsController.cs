@@ -17,6 +17,7 @@ namespace Quizzo.Api.Controllers
         private readonly QuizzoContext _context;
         private readonly IMapper _mapper;
         private static readonly Random random = new Random();
+        private static readonly int points = 10;
 
         public QuizRoomsController(QuizzoContext context, IMapper mapper)
         {
@@ -109,6 +110,35 @@ namespace Quizzo.Api.Controllers
             await _context.SaveChangesAsync();
 
             return quizRoom;
+        }
+
+        // GET: api/QuizRooms/GetLeaderboard
+        [HttpGet("{roomCode}/GetLeaderboard")]
+        public async Task<IActionResult> GetLeaderboard(string roomCode)
+        {
+            var leaderboard = new List<ParticipantDto>();
+
+            var participants = await _context.Participants.Include(p => p.Responses).ThenInclude(r => r.Question).ThenInclude(q => q.Answers).Where(p => p.QuizRoom.RoomCode == roomCode).ToListAsync();
+
+            foreach (var item in participants)
+            {
+                var participant = new ParticipantDto()
+                {
+                    Name = item.Name
+                };
+
+                foreach (var response in item.Responses)
+                {
+                    if (response.Question.Answers.Any(a => a.IsCorrect && a.Id == response.AnswerId))
+                    {
+                        participant.Score += points;
+                    }
+                }
+
+                leaderboard.Add(participant);
+            }
+
+            return Ok(leaderboard.OrderByDescending(l => l.Score));
         }
 
         private bool QuizRoomExists(Guid id)
