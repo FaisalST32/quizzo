@@ -1,5 +1,6 @@
 ﻿using System;
 using System.ComponentModel.DataAnnotations;
+using System.Text.Json.Serialization;
 
 namespace Quizzo.Api.Models
 {
@@ -16,5 +17,7 @@ namespace Quizzo.Api.Models
 
         [Required]
         public virtual Answer Answer { get; set; }
+
+        public long ResponseTime { get; set; }
     }
 }

@@ -57,8 +57,6 @@ namespace Quizzo.Api.Controllers
         }
 
         // PUT: api/Questions/5
-        // To protect from overposting attacks, please enable the specific properties you want to bind to, for
-        // more details see https://aka.ms/RazorPagesCRUD.
         [HttpPut("{id}")]
         [ApiExplorerSettings(IgnoreApi = true)]
         public async Task<IActionResult> PutQuestion(Guid id, Question question)
@@ -90,8 +88,6 @@ namespace Quizzo.Api.Controllers
         }
 
         // POST: api/Questions
-        // To protect from overposting attacks, please enable the specific properties you want to bind to, for
-        // more details see https://aka.ms/RazorPagesCRUD.
         [HttpPost("{roomCode}/PostQuestion")]
         public async Task<ActionResult<Question>> PostQuestion(string roomCode, QuestionDto questionDto)
         {

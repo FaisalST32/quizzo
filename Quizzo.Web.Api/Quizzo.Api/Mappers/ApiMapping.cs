@@ -14,7 +14,9 @@ namespace Quizzo.Api.Mappers
 
             CreateMap<QuestionDto, Question>().ReverseMap();
 
-            CreateMap<ParticipantDto, Participant>().ReverseMap().PreserveReferences();
+            CreateMap<ParticipantDto, Participant>().ReverseMap();
+
+            CreateMap<ResponseDto, Response>().ReverseMap();
         }
     }
 }
