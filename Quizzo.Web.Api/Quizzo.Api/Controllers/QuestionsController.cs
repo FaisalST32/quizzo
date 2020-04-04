@@ -4,7 +4,6 @@ using Microsoft.EntityFrameworkCore;
 using Quizzo.Api.DTOs;
 using Quizzo.Api.Models;
 using System;
-using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
 
@@ -25,15 +24,27 @@ namespace Quizzo.Api.Controllers
 
         // GET: api/Questions
         [HttpGet("GetQuestionsByQuizRoom/{roomCode}")]
-        public async Task<ActionResult<IEnumerable<Question>>> GetQuestionsByQuizRoom(string roomCode)
+        public async Task<IActionResult> GetQuestionsByQuizRoom(string roomCode)
         {
-            return await _context.Questions.Include(q => q.Answers).Where(q => q.QuizRoom.RoomCode == roomCode).ToListAsync();
+            var questions = await _context.Questions.Include(q => q.Answers).OrderBy(q => q.CreatedOnUtc).Where(q => q.QuizRoom.RoomCode == roomCode)
+                .Select(q => new QuestionDto()
+                {
+                    Id = q.Id,
+                    QuestionText = q.QuestionText,
+                    Answers = q.Answers.Select(a => new AnswerDto()
+                    {
+                        Id = a.Id,
+                        AnswerText = a.AnswerText
+                    }).ToList()
+                }).ToListAsync();
+
+            return Ok(questions);
         }
 
         // GET: api/Questions/5
         [HttpGet("{id}")]
         [ApiExplorerSettings(IgnoreApi = true)]
-        public async Task<ActionResult<Question>> GetQuestion(Guid id)
+        public async Task<ActionResult<QuestionDto>> GetQuestion(Guid id)
         {
             var question = await _context.Questions.FindAsync(id);
 
@@ -42,7 +53,7 @@ namespace Quizzo.Api.Controllers
                 return NotFound();
             }
 
-            return question;
+            return _mapper.Map<QuestionDto>(question);
         }
 
         // PUT: api/Questions/5
@@ -87,7 +98,7 @@ namespace Quizzo.Api.Controllers
             var question = _mapper.Map<Question>(questionDto);
 
             var quizRoom = await _context.QuizRooms.Include(q => q.Questions).SingleAsync(q => q.RoomCode == roomCode);
-           
+
             quizRoom.Questions.Add(question);
             await _context.SaveChangesAsync();
 
