@@ -5,13 +5,15 @@ import { IQuiz } from '../../interfaces/IQuiz';
 import WaitingArea from './waiting-area/waiting-area.component';
 import { IQuestion } from '../../interfaces/IQuestion';
 import QuestionArea from './question-area/question-area.component';
+import GameOver from './game-over/game-over.component';
 
 type GameState = {
     gameData?: IQuiz,
     currentQuestion?: IQuestion,
     currentTimer: number,
     currentOptionSelected: string,
-    gameOver: boolean
+    gameOver: boolean,
+    username: string
 }
 
 class Game extends Component<any, GameState> {
@@ -23,7 +25,8 @@ class Game extends Component<any, GameState> {
             currentQuestion: undefined,
             currentTimer: 20,
             currentOptionSelected: '',
-            gameOver: false
+            gameOver: false,
+            username: ''
         }
     }
     componentDidMount = () => {
@@ -33,11 +36,18 @@ class Game extends Component<any, GameState> {
         console.log(userName);
         const gameData = this.getGameData(gameId, userName);
         // TODO: add logic to select current question based on time elapsed
+        if (gameData.StoppedAtUTC) {
+            this.setState({
+                gameOver: true
+            })
+            return;
+        }
         this.setState({
             gameData: gameData,
             currentQuestion: gameData.Questions[0],
             currentOptionSelected: '',
-            currentTimer: 20
+            currentTimer: 20,
+            username: userName
         });
         this.beginTimer();
     }
@@ -50,9 +60,10 @@ class Game extends Component<any, GameState> {
     }
 
     beginTimer = () => {
-        setInterval(() => {
+        const timer = setInterval(() => {
             if (this.state.currentTimer === 0) {
                 this.onNextQuestion();
+                clearInterval(timer);
                 return;
             }
             this.setState(currState => {
@@ -65,10 +76,11 @@ class Game extends Component<any, GameState> {
 
     onNextQuestion = () => {
         const currentQuestionIndex: number = this.state.gameData?.Questions.findIndex(q => q.Id === this.state.currentQuestion?.Id) as number;
-        if (currentQuestionIndex === this.state.gameData?.Questions.length) {
+        if (currentQuestionIndex === this.state.gameData?.Questions.length as number - 1) {
             this.setState({
                 gameOver: true
-            })
+            });
+            return;
         }
         this.setState(currState => {
             return {
@@ -77,6 +89,7 @@ class Game extends Component<any, GameState> {
                 currentOptionSelected: ''
             }
         })
+        this.beginTimer();
     }
 
     onSelectOption = (questionId: string, optionId: string) => {
@@ -87,6 +100,10 @@ class Game extends Component<any, GameState> {
         this.setState({
             currentOptionSelected: optionId
         })
+    }
+
+    onViewResults = () => {
+        this.props.history.push(`/results/${this.state.gameData?.RoomCode}/${this.state.username}`)
     }
     render() {
         let gameArea = <WaitingArea />
@@ -100,7 +117,7 @@ class Game extends Component<any, GameState> {
         }
 
         if (this.state.gameOver) {
-            this.props.history.push('/welcome');
+            gameArea = <GameOver viewResults={this.onViewResults} />
         }
 
         return (

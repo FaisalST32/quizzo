@@ -1,0 +1,9 @@
+.gameOver {
+    text-align: center;
+    margin: 100px 0;
+    font-size: 4rem;
+}
+
+.gameOver button {
+    margin-top: 100px;
+}
