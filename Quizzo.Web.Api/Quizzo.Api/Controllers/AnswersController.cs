@@ -20,14 +20,12 @@ namespace Quizzo.Api.Controllers
             _context = context;
         }
 
-        // GET: api/Answers
         [HttpGet]
         public async Task<ActionResult<IEnumerable<Answer>>> GetAnswers()
         {
             return await _context.Answers.ToListAsync();
         }
 
-        // GET: api/Answers/5
         [HttpGet("{id}")]
         public async Task<ActionResult<Answer>> GetAnswer(Guid id)
         {
@@ -41,7 +39,6 @@ namespace Quizzo.Api.Controllers
             return answer;
         }
 
-        // PUT: api/Answers/5
         [HttpPut("{id}")]
         public async Task<IActionResult> PutAnswer(Guid id, Answer answer)
         {
@@ -71,7 +68,6 @@ namespace Quizzo.Api.Controllers
             return NoContent();
         }
 
-        // POST: api/Answers
         [HttpPost]
         public async Task<ActionResult<Answer>> PostAnswer(Answer answer)
         {
@@ -81,7 +77,6 @@ namespace Quizzo.Api.Controllers
             return CreatedAtAction("GetAnswer", new { id = answer.Id }, answer);
         }
 
-        // DELETE: api/Answers/5
         [HttpDelete("{id}")]
         public async Task<ActionResult<Answer>> DeleteAnswer(Guid id)
         {

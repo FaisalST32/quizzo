@@ -1,4 +1,5 @@
-﻿using System.Collections.Generic;
+﻿using System;
+using System.Collections.Generic;
 using System.ComponentModel.DataAnnotations;
 
 namespace Quizzo.Api.Models
@@ -10,6 +11,10 @@ namespace Quizzo.Api.Models
 
         [Required]
         public string RoomCode { get; set; }
+
+        public DateTime? StartedAtUtc { get; set; }
+
+        public DateTime? StoppedAtUtc { get; set; }
 
         public virtual ICollection<Question> Questions { get; set; }
 

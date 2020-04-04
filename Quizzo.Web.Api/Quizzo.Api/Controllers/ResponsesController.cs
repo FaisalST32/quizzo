@@ -23,7 +23,6 @@ namespace Quizzo.Api.Controllers
             _mapper = mapper;
         }
 
-        // GET: api/Responses
         [HttpGet]
         [ApiExplorerSettings(IgnoreApi = true)]
         public async Task<ActionResult<IEnumerable<Response>>> GetResponses()
@@ -31,7 +30,6 @@ namespace Quizzo.Api.Controllers
             return await _context.Responses.ToListAsync();
         }
 
-        // GET: api/Responses/5
         [HttpGet("{id}")]
         [ApiExplorerSettings(IgnoreApi = true)]
         public async Task<ActionResult<Response>> GetResponse(Guid id)
@@ -46,7 +44,6 @@ namespace Quizzo.Api.Controllers
             return response;
         }
 
-        // PUT: api/Responses/5
         [HttpPut("{id}")]
         [ApiExplorerSettings(IgnoreApi = true)]
         public async Task<IActionResult> PutResponse(Guid id, Response response)
@@ -77,7 +74,6 @@ namespace Quizzo.Api.Controllers
             return NoContent();
         }
 
-        // POST: api/Responses
         [HttpPost("{participantId}/PostResponse")]
         public async Task<ActionResult<Response>> PostResponse(Guid participantId, ResponseDto responseDto)
         {
@@ -94,7 +90,6 @@ namespace Quizzo.Api.Controllers
             return CreatedAtAction("GetResponse", new { id = response.Id }, response);
         }
 
-        // DELETE: api/Responses/5
         [HttpDelete("{id}")]
         [ApiExplorerSettings(IgnoreApi = true)]
         public async Task<ActionResult<Response>> DeleteResponse(Guid id)

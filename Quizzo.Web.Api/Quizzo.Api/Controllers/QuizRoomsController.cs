@@ -25,7 +25,6 @@ namespace Quizzo.Api.Controllers
             _mapper = mapper;
         }
 
-        // GET: api/QuizRooms
         [HttpGet]
         [ApiExplorerSettings(IgnoreApi = true)]
         public async Task<ActionResult<IEnumerable<QuizRoom>>> GetQuizRooms()
@@ -33,7 +32,6 @@ namespace Quizzo.Api.Controllers
             return await _context.QuizRooms.ToListAsync();
         }
 
-        // GET: api/QuizRooms/5
         [HttpGet("{id}")]
         [ApiExplorerSettings(IgnoreApi = true)]
         public async Task<ActionResult<QuizRoomDto>> GetQuizRoom(Guid id)
@@ -48,7 +46,6 @@ namespace Quizzo.Api.Controllers
             return _mapper.Map<QuizRoomDto>(quizRoom);
         }
 
-        // PUT: api/QuizRooms/5
         [HttpPut("{id}")]
         [ApiExplorerSettings(IgnoreApi = true)]
         public async Task<IActionResult> PutQuizRoom(Guid id, QuizRoom quizRoom)
@@ -79,7 +76,6 @@ namespace Quizzo.Api.Controllers
             return NoContent();
         }
 
-        // POST: api/QuizRooms
         [HttpPost]
         public async Task<ActionResult<QuizRoom>> PostQuizRoom()
         {
@@ -95,7 +91,6 @@ namespace Quizzo.Api.Controllers
             return CreatedAtAction("GetQuizRoom", new { id = quizRoom.Id }, quizRoom);
         }
 
-        // DELETE: api/QuizRooms/5
         [HttpDelete("{id}")]
         [ApiExplorerSettings(IgnoreApi = true)]
         public async Task<ActionResult<QuizRoom>> DeleteQuizRoom(Guid id)
@@ -112,7 +107,42 @@ namespace Quizzo.Api.Controllers
             return quizRoom;
         }
 
-        // GET: api/QuizRooms/GetLeaderboard
+        [HttpGet("{roomCode}/IsQuizActive")]
+        public async Task<IActionResult> IsQuizActive(string roomCode)
+        {
+            var quizRoom = await _context.QuizRooms.SingleAsync(q => q.RoomCode == roomCode);
+
+            return Ok(quizRoom.StartedAtUtc.HasValue && !quizRoom.StoppedAtUtc.HasValue);
+        }
+
+        [HttpPost("{roomCode}/StartQuiz")]
+        public async Task<IActionResult> StartQuiz(string roomCode)
+        {
+            var quizRoom = await _context.QuizRooms.SingleAsync(q => q.RoomCode == roomCode);
+
+            if (!quizRoom.StartedAtUtc.HasValue)
+            {
+                quizRoom.StartedAtUtc = DateTime.UtcNow;
+                await _context.SaveChangesAsync();
+            }
+
+            return Ok();
+        }
+
+        [HttpPost("{roomCode}/StopQuiz")]
+        public async Task<IActionResult> StopQuiz(string roomCode)
+        {
+            var quizRoom = await _context.QuizRooms.SingleAsync(q => q.RoomCode == roomCode);
+
+            if (!quizRoom.StoppedAtUtc.HasValue)
+            {
+                quizRoom.StoppedAtUtc = DateTime.UtcNow;
+                await _context.SaveChangesAsync();
+            }
+
+            return Ok();
+        }
+
         [HttpGet("{roomCode}/GetLeaderboard")]
         public async Task<IActionResult> GetLeaderboard(string roomCode)
         {

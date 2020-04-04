@@ -3,15 +3,17 @@ using System;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Infrastructure;
 using Microsoft.EntityFrameworkCore.Metadata;
+using Microsoft.EntityFrameworkCore.Migrations;
 using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 using Quizzo.Api.Models;
 
 namespace Quizzo.Api.Migrations
 {
     [DbContext(typeof(QuizzoContext))]
-    partial class QuizzoContextModelSnapshot : ModelSnapshot
+    [Migration("20200404124640_QuizStartStop")]
+    partial class QuizStartStop
     {
-        protected override void BuildModel(ModelBuilder modelBuilder)
+        protected override void BuildTargetModel(ModelBuilder modelBuilder)
         {
 #pragma warning disable 612, 618
             modelBuilder

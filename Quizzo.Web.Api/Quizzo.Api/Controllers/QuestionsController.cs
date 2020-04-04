@@ -22,7 +22,6 @@ namespace Quizzo.Api.Controllers
             _mapper = mapper;
         }
 
-        // GET: api/Questions
         [HttpGet("GetQuestionsByQuizRoom/{roomCode}")]
         public async Task<IActionResult> GetQuestionsByQuizRoom(string roomCode)
         {
@@ -41,7 +40,6 @@ namespace Quizzo.Api.Controllers
             return Ok(questions);
         }
 
-        // GET: api/Questions/5
         [HttpGet("{id}")]
         [ApiExplorerSettings(IgnoreApi = true)]
         public async Task<ActionResult<QuestionDto>> GetQuestion(Guid id)
@@ -56,7 +54,6 @@ namespace Quizzo.Api.Controllers
             return _mapper.Map<QuestionDto>(question);
         }
 
-        // PUT: api/Questions/5
         [HttpPut("{id}")]
         [ApiExplorerSettings(IgnoreApi = true)]
         public async Task<IActionResult> PutQuestion(Guid id, Question question)
@@ -87,7 +84,6 @@ namespace Quizzo.Api.Controllers
             return NoContent();
         }
 
-        // POST: api/Questions
         [HttpPost("{roomCode}/PostQuestion")]
         public async Task<ActionResult<Question>> PostQuestion(string roomCode, QuestionDto questionDto)
         {
@@ -101,7 +97,6 @@ namespace Quizzo.Api.Controllers
             return CreatedAtAction("GetQuestion", new { id = question.Id }, question);
         }
 
-        // DELETE: api/Questions/5
         [HttpDelete("{id}")]
         [ApiExplorerSettings(IgnoreApi = true)]
         public async Task<ActionResult<Question>> DeleteQuestion(Guid id)

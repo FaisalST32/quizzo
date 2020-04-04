@@ -23,7 +23,6 @@ namespace Quizzo.Api.Controllers
             _mapper = mapper;
         }
 
-        // GET: api/Participants
         [HttpGet]
         [ApiExplorerSettings(IgnoreApi = true)]
         public async Task<ActionResult<IEnumerable<Participant>>> GetParticipants()
@@ -31,7 +30,6 @@ namespace Quizzo.Api.Controllers
             return await _context.Participants.ToListAsync();
         }
 
-        // GET: api/Participants/5
         [HttpGet("{id}")]
         [ApiExplorerSettings(IgnoreApi = true)]
         public async Task<ActionResult<Participant>> GetParticipant(Guid id)
@@ -46,7 +44,6 @@ namespace Quizzo.Api.Controllers
             return participant;
         }
 
-        // PUT: api/Participants/5
         [HttpPut("{id}")]
         [ApiExplorerSettings(IgnoreApi = true)]
         public async Task<IActionResult> PutParticipant(Guid id, Participant participant)
@@ -77,7 +74,6 @@ namespace Quizzo.Api.Controllers
             return NoContent();
         }
 
-        // POST: api/Participants
         [HttpPost("{roomCode}/PostParticipant")]
         public async Task<ActionResult<Participant>> PostParticipant(string roomCode, ParticipantDto participantDto)
         {
@@ -91,7 +87,6 @@ namespace Quizzo.Api.Controllers
             return CreatedAtAction("GetParticipant", new { id = participant.Id }, participant);
         }
 
-        // DELETE: api/Participants/5
         [HttpDelete("{id}")]
         [ApiExplorerSettings(IgnoreApi = true)]
         public async Task<ActionResult<Participant>> DeleteParticipant(Guid id)
