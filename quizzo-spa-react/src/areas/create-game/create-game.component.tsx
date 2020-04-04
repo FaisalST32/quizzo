@@ -116,23 +116,24 @@ class CreateGame extends Component<any, ICreateGameState> {
                 <div className={classes.createGameContainer}>
                     <div className={classes.createGameHeader}>
                         Game ID: {this.state.gameId}
-                        <button onClick={this.onFinish} className="button clear-button large-button" style={{float: 'right', color: 'white'}}>Finish</button>
+                        <button onClick={this.onFinish} className="button clear-button large-button" style={{ float: 'right', color: 'white' }}>Finish</button>
                     </div>
                     <div className={classes.createGameContent}>
                         <div>
+                            <AddQuestionForm question={this.state.questionToAdd} questionChange={this.onChangeQuestion} optionChange={this.onChangeOption} setCorrectOption={this.onSetCorrectOption} />
+                            <div className={classes.addQuestion}>
+                                <button className="button clear-button" onClick={this.onAddQuestion}>
+                                    + Add Question
+                            </button>
+                            </div>
                             {this.state.questions.map((question, i) => {
                                 return (
-                                    <AddedQuestion question={question} />
+                                    <AddedQuestion key={question.Id ? question.Id : i} question={question} questionNumber={i + 1} />
                                 )
                             })}
-                            <AddQuestionForm question={this.state.questionToAdd} questionChange={this.onChangeQuestion} optionChange={this.onChangeOption} setCorrectOption={this.onSetCorrectOption} />
 
                         </div>
-                        <div className={classes.addQuestion}>
-                            <button className="button clear-button" onClick={this.onAddQuestion}>
-                                + Add Question
-                            </button>
-                        </div>
+
                     </div>
                 </div>
             </div>

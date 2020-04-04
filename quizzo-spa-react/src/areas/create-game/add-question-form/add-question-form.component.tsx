@@ -27,10 +27,9 @@ const AddQuestionForm: FunctionComponent<AddQuestionFormProps> = (props) => {
 
 
                 return (
-                    <React.Fragment>
+                    <React.Fragment key={i}>
                         <div className={classes.option}>
                             <input className={classes.input} type="text"
-                                key={i}
                                 value={answer.AnswerText}
                                 placeholder={'Option ' + +(i + 1)}
                                 onChange={e => { props.optionChange(e.target.value, i) }} />
