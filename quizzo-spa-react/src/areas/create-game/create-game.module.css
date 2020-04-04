@@ -1,12 +1,47 @@
 .createGame {
-    background-image: linear-gradient(
-        to right,
-        rgb(234, 56, 77, 0.7),
-        rgb(213, 16, 39, 0.7)
-      ),
-      url("../../assets/images/game-bg.jpg");
-    background-position: center;
-    background-size: cover;
-    height: 100vh;
-    width: 100vw;
+  background-image: linear-gradient(
+      to right,
+      rgba(128, 0, 128, 0.548),
+      rgba(128, 0, 128, 0.486)
+    ),
+    url("../../assets/images/game-bg.jpg");
+  background-position: center;
+  background-size: cover;
+  background-attachment: fixed;
+  height: 100vh;
+  width: 100vw;
+  overflow-y: scroll;
+}
+
+.createGameContainer {
+  background-color: rgba(255, 255, 255, 0.6);
+  background: white;
+  border-radius: 20px;
+  min-height: 60vh;
+  top: 10vh;
+  left: 50vw;
+  position: relative;
+  width: 20vw;
+  min-width: 1000px;
+  box-sizing: border-box;
+  box-shadow: 0 0 40px rgba(0, 0, 0, 0.2);
+  transform: translateX(-50%);
+  overflow: hidden;
+}
+
+.createGameHeader {
+  padding: 20px 40px;
+  font-size: 3rem;
+  box-sizing: border-box;
+  background: purple;
+  color: white;
+  width: 100%;
+}
+
+.createGameContent {
+  padding: 20px 40px;
+}
+
+.finishButton {
+  
 }

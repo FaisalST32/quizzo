@@ -40,6 +40,7 @@ class Welcome extends Component<any, IWelcomeState> {
             welcomeActions = (
                 <div className={classes.joinGame}>
                     <input className="input large-input" type="text" placeholder="Invite Code" />
+                    <input className="input large-input" type="text" placeholder="Your Name" style={{ marginTop: '20px' }} />
                     <button className="button large-button success-button" style={{ marginTop: '20px' }}>Join Now</button>
                     <button className="button clear-button" onClick={this.onShowWelcomeButtons} style={{ marginTop: '20px' }}>Back</button>
                 </div>
