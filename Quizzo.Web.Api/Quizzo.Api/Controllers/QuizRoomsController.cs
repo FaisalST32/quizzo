@@ -162,6 +162,11 @@ namespace Quizzo.Api.Controllers
                     if (response.Question.Answers.Any(a => a.IsCorrect && a.Id == response.AnswerId))
                     {
                         participant.Score += points;
+
+                        if (response.ResponseTime == _context.Responses.Where(q => q.QuestionId == response.QuestionId).Min(q => q.ResponseTime))
+                        {
+                            participant.Score += points;
+                        }
                     }
                 }
 
