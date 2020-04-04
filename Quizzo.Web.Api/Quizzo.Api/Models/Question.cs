@@ -9,5 +9,8 @@ namespace Quizzo.Api.Models
         public string QuestionText { get; set; }
 
         public virtual ICollection<Answer> Answers { get; set; }
+
+        [Required]
+        public virtual QuizRoom QuizRoom { get; set; }
     }
 }

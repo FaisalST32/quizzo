@@ -25,10 +25,10 @@ namespace Quizzo.Api.Controllers
         }
 
         // GET: api/Questions
-        [HttpGet]
-        public async Task<ActionResult<IEnumerable<Question>>> GetQuestions()
+        [HttpGet("GetQuestionsByQuizRoom/{roomCode}")]
+        public async Task<ActionResult<IEnumerable<Question>>> GetQuestionsByQuizRoom(string roomCode)
         {
-            return await _context.Questions.ToListAsync();
+            return await _context.Questions.Include(q => q.Answers).Where(q => q.QuizRoom.RoomCode == roomCode).ToListAsync();
         }
 
         // GET: api/Questions/5
