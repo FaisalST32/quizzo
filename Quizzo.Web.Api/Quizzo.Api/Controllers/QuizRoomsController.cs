@@ -32,18 +32,26 @@ namespace Quizzo.Api.Controllers
             return await _context.QuizRooms.ToListAsync();
         }
 
-        [HttpGet("{id}")]
-        [ApiExplorerSettings(IgnoreApi = true)]
-        public async Task<ActionResult<QuizRoomDto>> GetQuizRoom(Guid id)
+        [HttpGet("{roomCode}")]
+        public async Task<IActionResult> GetQuizRoom(string roomCode)
         {
-            var quizRoom = await _context.QuizRooms.FindAsync(id);
+            var quizRoom = await _context.QuizRooms.Include(q => q.Questions).ThenInclude(q => q.Answers).SingleAsync(q => q.RoomCode == roomCode);
 
-            if (quizRoom == null)
-            {
-                return NotFound();
-            }
+            var questions = quizRoom.Questions
+                .Select(q => new QuestionDto()
+                {
+                    Id = q.Id,
+                    QuestionText = q.QuestionText,
+                    Answers = q.Answers.Select(a => new AnswerDto()
+                    {
+                        Id = a.Id,
+                        AnswerText = a.AnswerText
+                    }).ToList()
+                });
 
-            return _mapper.Map<QuizRoomDto>(quizRoom);
+            var quizRoomDto = _mapper.Map<QuizRoomDto>(quizRoom);
+
+            return Ok(new { quizRoom = quizRoomDto, questions});
         }
 
         [HttpPut("{id}")]
@@ -123,6 +131,7 @@ namespace Quizzo.Api.Controllers
             if (!quizRoom.StartedAtUtc.HasValue)
             {
                 quizRoom.StartedAtUtc = DateTime.UtcNow;
+                quizRoom.StoppedAtUtc = null;
                 await _context.SaveChangesAsync();
             }
 
