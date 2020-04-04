@@ -9,7 +9,7 @@ function App() {
   return (
     <BrowserRouter>
       <Switch>
-        <Route component={Game} path="/game" />
+        <Route exact component={Game} path="/game/:id/:username" />
         <Route component={CreateGame} path="/create-game" />
         <Route component={Welcome} path="/" />
       </Switch>

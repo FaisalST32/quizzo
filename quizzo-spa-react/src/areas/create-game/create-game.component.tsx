@@ -110,7 +110,18 @@ class CreateGame extends Component<any, ICreateGameState> {
     onFinish = () => {
         this.onAddQuestion();
     }
+
     render() {
+        
+        let addedQuestions = null;
+        if (this.state.questions && this.state.questions.length > 0) {
+            addedQuestions = this.state.questions.map((question, i) => {
+                return (
+                    <AddedQuestion key={question.Id ? question.Id : i} question={question} questionNumber={i + 1} />
+                )
+            })
+        }
+
         return (
             <div className={classes.createGame}>
                 <div className={classes.createGameContainer}>
@@ -119,21 +130,11 @@ class CreateGame extends Component<any, ICreateGameState> {
                         <button onClick={this.onFinish} className="button clear-button large-button" style={{ float: 'right', color: 'white' }}>Finish</button>
                     </div>
                     <div className={classes.createGameContent}>
-                        <div>
-                            <AddQuestionForm question={this.state.questionToAdd} questionChange={this.onChangeQuestion} optionChange={this.onChangeOption} setCorrectOption={this.onSetCorrectOption} />
-                            <div className={classes.addQuestion}>
-                                <button className="button clear-button" onClick={this.onAddQuestion}>
-                                    + Add Question
-                            </button>
-                            </div>
-                            {this.state.questions.map((question, i) => {
-                                return (
-                                    <AddedQuestion key={question.Id ? question.Id : i} question={question} questionNumber={i + 1} />
-                                )
-                            })}
-
+                        <AddQuestionForm question={this.state.questionToAdd} questionChange={this.onChangeQuestion} optionChange={this.onChangeOption} setCorrectOption={this.onSetCorrectOption} />
+                        <div className={classes.addQuestion}>
+                            <button className="button clear-button" onClick={this.onAddQuestion}>+ Add Question</button>
                         </div>
-
+                        {addedQuestions}
                     </div>
                 </div>
             </div>

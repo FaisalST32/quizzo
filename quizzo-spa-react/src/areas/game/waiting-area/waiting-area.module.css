@@ -1,0 +1,39 @@
+@keyframes spin {
+    from {
+        transform: rotate(0deg);
+    }
+  
+    to {
+        transform: rotate(360deg);
+    }
+  }
+
+.waitingArea {
+    font-size: 1.3rem;
+    padding: 20px 40px;
+
+
+}
+
+.waitingAreaHeader {
+    font-size: 3rem;
+    font-weight: bold;
+    text-align: center;
+    color: green;
+}
+
+.loader {
+    position: relative;
+    left: 50%;
+    margin: 50px 0;
+    margin-left: -50px;
+    height: 100px;
+    width: 100px;
+    border-radius: 50%;
+    border: solid 15px rgb(213, 255, 213);
+    border-top-color: green;
+    animation-name: spin;
+    animation-duration: 2s;
+    animation-timing-function: linear;
+    animation-iteration-count: infinite;
+}

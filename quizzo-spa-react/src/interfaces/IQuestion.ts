@@ -1,7 +1,7 @@
 import { IAnswer } from "./IAnswer";
 
 export interface IQuestion {
-    Id: string;
+    Id?: string;
     QuestionText: string;
     Answers: IAnswer[]
 }
