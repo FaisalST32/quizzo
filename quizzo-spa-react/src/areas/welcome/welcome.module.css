@@ -1,45 +1,63 @@
 .welcome {
-  background: linear-gradient(
+  /* background: linear-gradient(
     to right,
     #ea384d,
     #d31027
-  );
-  height: 100vh;
-  width: 100vw;
+  ); */
+  background-image: linear-gradient(
+      to right,
+      rgb(234, 56, 77, 0.7),
+      rgb(213, 16, 39, 0.7)
+    ),
+    url("../../assets/images/game-bg.jpg");
+  background-position: center;
+  background-size: cover;
+  min-height: 100vh;
+  min-width: 100vw;
 }
 
 .welcomeContainer {
-    background-color: white;
-    border-radius: 20px;
-    height: 60vh;
-    top: 15vh;
-    padding: 60px 100px;
-    position: relative;
-    width: 40vw;
-    left: 30vw;
-    box-sizing: border-box;
-    box-shadow: 0 0 40px rgba(0, 0, 0, 0.2);
+  background-color: rgba(255, 255, 255, 0.6);
+  background: white;
+  border-radius: 20px;
+  min-height: 60vh;
+  top: 10vh;
+  left: 50vw;
+  padding: 60px 40px;
+  position: relative;
+  width: 20vw;
+  min-width: 400px;
+  box-sizing: border-box;
+  box-shadow: 0 0 40px rgba(0, 0, 0, 0.2);
+  transform: translateX(-50%);
 }
 
 .welcomeHeader {
-    font-size: 3rem;
-    font-weight: bold;
-    text-align: center;
-    color: #d31027;
+  font-size: 2rem;
+  text-align: center;
+  color: #d31027;
+}
+.welcomeHeader span {
+  font-size: 4rem;
+  font-weight: bolder;
+  display: block;
+  margin-top: 20px;
 }
 
 .welcomeButtons {
-    display: flex;
-    flex-flow: row nowrap;
-    justify-content: space-between;
+  display: flex;
+  flex-flow: column nowrap;
+  justify-content: space-between;
+}
+.welcomeButtons > button {
+  margin-top: 20px;
 }
 
 .joinGame {
-    display: flex;
-    flex-flow: column nowrap;
-    align-items: center;
+  display: flex;
+  flex-flow: column nowrap;
 }
 
 .welcomeActions {
-    margin-top: 25%;
+  margin-top: 25%;
 }

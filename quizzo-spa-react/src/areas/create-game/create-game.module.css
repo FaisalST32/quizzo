@@ -1,0 +1,12 @@
+.createGame {
+    background-image: linear-gradient(
+        to right,
+        rgb(234, 56, 77, 0.7),
+        rgb(213, 16, 39, 0.7)
+      ),
+      url("../../assets/images/game-bg.jpg");
+    background-position: center;
+    background-size: cover;
+    height: 100vh;
+    width: 100vw;
+}

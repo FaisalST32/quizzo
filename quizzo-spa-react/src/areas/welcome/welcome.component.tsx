@@ -5,7 +5,7 @@ interface IWelcomeState {
     showJoinBox: boolean
 }
 
-class Welcome extends Component<{}, IWelcomeState> {
+class Welcome extends Component<any, IWelcomeState> {
     constructor(props: any) {
         super(props);
         this.state = {
@@ -14,7 +14,7 @@ class Welcome extends Component<{}, IWelcomeState> {
     }
 
     onCreateGame = () => {
-
+        this.props.history.push('/create-game');
     }
 
     onShowJoin = () => {
@@ -28,6 +28,7 @@ class Welcome extends Component<{}, IWelcomeState> {
             showJoinBox: false
         });
     }
+
     render() {
         let welcomeActions = (
             <div className={classes.welcomeButtons}>
@@ -39,15 +40,15 @@ class Welcome extends Component<{}, IWelcomeState> {
             welcomeActions = (
                 <div className={classes.joinGame}>
                     <input className="input large-input" type="text" placeholder="Invite Code" />
-                    <button className="button large-button success-button" style={{marginTop: '20px'}}>Join Now</button>
-                    <button className="button danger-button" onClick={this.onShowWelcomeButtons} style={{marginTop: '20px'}}>Back</button>
+                    <button className="button large-button success-button" style={{ marginTop: '20px' }}>Join Now</button>
+                    <button className="button clear-button" onClick={this.onShowWelcomeButtons} style={{ marginTop: '20px' }}>Back</button>
                 </div>
             )
         }
         return (
             <div className={classes.welcome}>
                 <div className={classes.welcomeContainer}>
-                    <div className={classes.welcomeHeader}>Welcome to Quizzo</div>
+                    <div className={classes.welcomeHeader}>Welcome to <span>Quizzo</span></div>
                     <div className={classes.welcomeActions}>
                         {welcomeActions}
                     </div>

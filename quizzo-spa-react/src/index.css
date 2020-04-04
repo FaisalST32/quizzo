@@ -2,7 +2,7 @@ body {
   margin: 0;
 }
 body, button, input {
-  font-family: 'Courier New', -apple-system, BlinkMacSystemFont, 'Segoe UI', 'Roboto', 'Oxygen',
+  font-family: candara, 'Courier New', -apple-system, BlinkMacSystemFont, 'Segoe UI', 'Roboto', 'Oxygen',
     'Ubuntu', 'Cantarell', 'Fira Sans', 'Droid Sans', 'Helvetica Neue',
     sans-serif;
   -webkit-font-smoothing: antialiased;
@@ -56,6 +56,11 @@ code {
 
 .danger-button:active {
   background-color: rgb(75, 4, 4);
+}
+
+.clear-button {
+  color: #d31027;
+  background-color: transparent;
 }
 
 .input {
