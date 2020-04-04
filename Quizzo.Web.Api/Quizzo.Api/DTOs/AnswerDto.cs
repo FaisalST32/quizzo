@@ -6,5 +6,7 @@ namespace Quizzo.Api.DTOs
     {
         [Required]
         public string AnswerText { get; set; }
+
+        public bool IsCorrect { get; set; }
     }
 }

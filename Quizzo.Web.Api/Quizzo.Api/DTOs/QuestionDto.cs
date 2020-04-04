@@ -1,4 +1,4 @@
-﻿using System;
+﻿using System.Collections.Generic;
 using System.ComponentModel.DataAnnotations;
 
 namespace Quizzo.Api.DTOs
@@ -8,7 +8,6 @@ namespace Quizzo.Api.DTOs
         [Required]
         public string QuestionText { get; set; }
 
-        [Required]
-        public Guid QuizRoomId { get; set; }
+        public ICollection<AnswerDto> Answers { get; set; }
     }
 }

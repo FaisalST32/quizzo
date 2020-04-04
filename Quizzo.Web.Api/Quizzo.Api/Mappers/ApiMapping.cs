@@ -1,6 +1,7 @@
 ﻿using AutoMapper;
 using Quizzo.Api.DTOs;
 using Quizzo.Api.Models;
+using System.Linq;
 
 namespace Quizzo.Api.Mappers
 {
@@ -10,7 +11,9 @@ namespace Quizzo.Api.Mappers
         {
             CreateMap<QuizRoom, QuizRoomDto>();
 
-            CreateMap<Question, QuestionDto>();
+            CreateMap<AnswerDto, Answer>().ReverseMap();
+
+            CreateMap<QuestionDto, Question>().ReverseMap();
         }
     }
 }
