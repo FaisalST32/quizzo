@@ -1,10 +1,15 @@
 import React, { Component } from 'react';
 import classes from './welcome.module.css';
+import axios from 'axios';
+import { config } from '../../environments/environment.dev';
+import { IParticipant } from '../../interfaces/IParticipant';
+import { IQuiz } from '../../interfaces/IQuiz';
 
 interface IWelcomeState {
     showJoinBox: boolean,
     userName: string;
     inviteCode: string;
+    isLoading: boolean;
 }
 
 class Welcome extends Component<any, IWelcomeState> {
@@ -13,12 +18,27 @@ class Welcome extends Component<any, IWelcomeState> {
         this.state = {
             showJoinBox: false,
             inviteCode: '',
-            userName: ''
+            userName: '',
+            isLoading: false
         }
     }
 
-    onCreateGame = () => {
-        this.props.history.push('/create-game');
+    onCreateGame = async () => {
+        try {
+            this.props.toggleLoader();
+            const roomCode = await this.createNewQuiz();
+            this.props.toggleLoader();
+            this.props.history.push(`/create-game/${roomCode}`);
+        } catch (err) {
+            this.props.toggleLoader();
+        }
+    }
+
+    createNewQuiz = async (): Promise<string> => {
+        const resp = await axios.post<IQuiz>(`${config.apiUrl}quizrooms/create`);
+        console.log(resp);
+        const roomCode: string = resp.data.roomCode;
+        return roomCode;
     }
 
     onShowJoin = () => {
@@ -45,11 +65,36 @@ class Welcome extends Component<any, IWelcomeState> {
         })
     }
 
-    onJoinRoom = () => {    
-        //TODO: check if room exists
-        //TODO: addplayer and go to game
 
-        this.props.history.push(`/game/${this.state.inviteCode}/${this.state.userName}`);
+    onJoinRoom = async () => {
+
+        try {
+            this.props.toggleLoader();
+            const roomExists = await this.checkRoomExists(this.state.inviteCode);
+            if (!roomExists) {
+                this.props.toggleLoader();
+                return;
+            }
+
+            await this.addParticipantToGame(this.state.userName, this.state.inviteCode);
+            this.props.toggleLoader();
+
+            this.props.history.push(`/game/${this.state.inviteCode}/${this.state.userName}`);
+        } catch (err) {
+            this.props.toggleLoader();
+        }
+    }
+
+    addParticipantToGame = async (username: string, roomCode: string) => {
+        const participant: IParticipant = { Name: username, Score: 0 };
+        await axios.post(`${config.apiUrl}${roomCode}/PostParticipant`, participant);
+    }
+
+    checkRoomExists = async (roomCode: string): Promise<boolean> => {
+        if (!roomCode)
+            return false;
+        const roomExists: boolean = (await axios.get<boolean>(`${config.apiUrl}roomexists/${roomCode}`)).data;
+        return roomExists;
     }
     render() {
         let welcomeActions = (
@@ -77,6 +122,7 @@ class Welcome extends Component<any, IWelcomeState> {
                     </div>
                 </div>
             </div>
+
         )
     }
 }

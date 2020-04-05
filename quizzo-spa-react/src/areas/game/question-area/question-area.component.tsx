@@ -11,7 +11,7 @@ type QuestionAreaProps = {
 
 const QuestionArea: FunctionComponent<QuestionAreaProps> = props => {
     const optionLabels = ['A', 'B', 'C', 'D'];
-    const options = props.question?.Answers.map((answer, i) => {
+    const options = props.question?.answers.map((answer, i) => {
         const isSelected = props.selectedOption === answer.Id;
         const cssClasses = [classes.option]
         if (isSelected) {
@@ -20,8 +20,8 @@ const QuestionArea: FunctionComponent<QuestionAreaProps> = props => {
         return (
             <div key={answer.Id}
                 className={cssClasses.join(' ')}
-                onClick={() => { props.selectOption(props.question?.Id, answer.Id) }}>
-                <small>{optionLabels[i]}.</small> {answer.AnswerText}
+                onClick={() => { props.selectOption(props.question?.id, answer.Id) }}>
+                <small>{optionLabels[i]}.</small> {answer.answerText}
             </div>
         )
     })
@@ -30,7 +30,7 @@ const QuestionArea: FunctionComponent<QuestionAreaProps> = props => {
             <div className={classes.timer} style={{width: ((props.timer / 20) * 100).toString() + '%'}}></div>
             <div className={classes.questionArea}>
                 <div className={classes.questionText}>
-                    <small>Q. </small>{props.question?.QuestionText}
+                    <small>Q. </small>{props.question?.questionText}
                 </div>
                 {options}
             </div>

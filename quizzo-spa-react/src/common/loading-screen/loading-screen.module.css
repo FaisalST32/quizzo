@@ -1,0 +1,39 @@
+@keyframes spin {
+  from {
+    transform: rotate(0deg);
+  }
+
+  to {
+    transform: rotate(360deg);
+  }
+}
+
+.loadingOverlay {
+  position: fixed;
+  z-index: 100;
+  background-color: rgba(0, 0, 0, 0.5);
+  height: 100vh;
+  width: 100vw;
+  left: 0;
+  top: 0;
+}
+.loader {
+  position: fixed;
+  left: 50vw;
+  top: 50vh;
+  box-sizing: border-box;
+  /* transform: translate(-50%, -50%); */
+  margin: 50px 0;
+  margin-left: -50px;
+  margin-top: -50px;
+  height: 100px;
+  width: 100px;
+  border-radius: 50%;
+  border: solid 15px rgb(213, 255, 213);
+  border-top-color: green;
+  animation-name: spin;
+  animation-duration: 2s;
+  animation-timing-function: linear;
+  animation-iteration-count: infinite;
+  z-index: 110;
+}

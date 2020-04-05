@@ -84,7 +84,7 @@ namespace Quizzo.Api.Controllers
             return NoContent();
         }
 
-        [HttpPost]
+        [HttpPost("create")]
         public async Task<ActionResult<QuizRoom>> PostQuizRoom()
         {
             var quizRoom = new QuizRoom()
@@ -96,7 +96,7 @@ namespace Quizzo.Api.Controllers
             _context.QuizRooms.Add(quizRoom);
             await _context.SaveChangesAsync();
 
-            return CreatedAtAction("GetQuizRoom", new { id = quizRoom.Id }, quizRoom);
+            return Ok(quizRoom);
         }
 
         [HttpDelete("{id}")]
@@ -189,7 +189,7 @@ namespace Quizzo.Api.Controllers
         public async Task<IActionResult> GetSolution(string roomCode, Guid participantId)
         {
             var quizRoom = await _context.QuizRooms.Select(q => new { q.RoomCode, q.StartedAtUtc, q.StoppedAtUtc }).SingleAsync(q => q.RoomCode == roomCode);
-            
+
             if (!quizRoom.StartedAtUtc.HasValue || !quizRoom.StoppedAtUtc.HasValue)
             {
                 return BadRequest();
@@ -225,6 +225,15 @@ namespace Quizzo.Api.Controllers
             }
 
             return Ok(solutions);
+        }
+
+        [HttpGet("roomexists/{roomCode}")]
+        public async Task<IActionResult> CheckRoomExists(string roomCode)
+        {
+            if (string.IsNullOrEmpty(roomCode))
+                return Ok(false);
+            var roomExists = await _context.QuizRooms.AnyAsync(qr => qr.RoomCode.ToLower() == roomCode.ToLower());
+            return Ok(roomExists);
         }
 
         private bool QuizRoomExists(Guid id)

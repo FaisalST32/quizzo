@@ -25,6 +25,8 @@ namespace Quizzo.Api
             services.AddDbContext<QuizzoContext>(opt =>
                   opt.UseSqlServer(Configuration.GetConnectionString("DefaultConnection")));
 
+            services.AddCors();
+
             services.AddControllers();
 
             services.AddSwaggerGen(c =>
@@ -44,6 +46,8 @@ namespace Quizzo.Api
             }
 
             app.UseHttpsRedirection();
+
+            app.UseCors(config => config.AllowAnyOrigin().AllowAnyMethod().AllowAnyHeader());
 
             app.UseRouting();
 

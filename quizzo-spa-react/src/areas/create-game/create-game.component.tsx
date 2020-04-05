@@ -4,6 +4,8 @@ import { IQuestion } from '../../interfaces/IQuestion';
 import AddQuestionForm from './add-question-form/add-question-form.component';
 import AddedQuestion from './added-question/added-question.component';
 import { IAnswer } from '../../interfaces/IAnswer';
+import { config } from '../../environments/environment.dev';
+import axios from 'axios';
 
 interface ICreateGameState {
     gameId: string;
@@ -13,24 +15,23 @@ interface ICreateGameState {
 
 class CreateGame extends Component<any, ICreateGameState> {
     emptyQuestion = {
-        Id: '',
-        QuestionText: '',
-        Answers: [
+        questionText: '',
+        answers: [
             {
-                AnswerText: '',
-                IsCorrect: false
+                answerText: '',
+                isCorrect: false
             },
             {
-                AnswerText: '',
-                IsCorrect: false
+                answerText: '',
+                isCorrect: false
             },
             {
-                AnswerText: '',
-                IsCorrect: false
+                answerText: '',
+                isCorrect: false
             },
             {
-                AnswerText: '',
-                IsCorrect: false
+                answerText: '',
+                isCorrect: false
             },
         ]
     }
@@ -43,9 +44,27 @@ class CreateGame extends Component<any, ICreateGameState> {
         }
     }
 
+    componentDidMount = async () => {
+        const roomCode = this.props.match.params.roomCode;
+        const questions = await this.getGameQuestions(roomCode);
+        this.setState({
+            gameId: roomCode,
+            questions: questions
+        })
+    }
+
+    getGameQuestions = async (gameId: string): Promise<IQuestion[]> => {
+        const resp = await axios.get<IQuestion[]>(`${config.apiUrl}Questions/GetQuestionsByQuizRoom/${gameId}`);
+        console.log(resp);
+        const questions = resp.data;
+        return questions;
+    }
+
+
+
     onChangeQuestion = (newValue: string) => {
         let questionToAdd = { ...this.state.questionToAdd };
-        questionToAdd.QuestionText = newValue;
+        questionToAdd.questionText = newValue;
         this.setState({
             questionToAdd: questionToAdd
         })
@@ -53,11 +72,11 @@ class CreateGame extends Component<any, ICreateGameState> {
 
     onChangeOption = (newValue: string, optionIndex: number) => {
         let questionToAdd = { ...this.state.questionToAdd };
-        let questionAnswers = [...questionToAdd.Answers];
+        let questionAnswers = [...questionToAdd.answers];
         let questionOption = { ...questionAnswers[optionIndex] };
-        questionOption.AnswerText = newValue;
+        questionOption.answerText = newValue;
         questionAnswers[optionIndex] = questionOption;
-        questionToAdd.Answers = questionAnswers;
+        questionToAdd.answers = questionAnswers;
         this.setState({
             questionToAdd: questionToAdd
         });
@@ -65,59 +84,74 @@ class CreateGame extends Component<any, ICreateGameState> {
 
     onSetCorrectOption = (optionIndex: number) => {
         let questionToAdd = { ...this.state.questionToAdd };
-        let questionAnswers: IAnswer[] = [...questionToAdd.Answers].map((answer, i) => {
+        let questionAnswers: IAnswer[] = [...questionToAdd.answers].map((answer, i) => {
             return {
-                AnswerText: answer.AnswerText,
-                IsCorrect: optionIndex === i
+                answerText: answer.answerText,
+                isCorrect: optionIndex === i
             }
         });
 
-        // let questionOption = { ...questionAnswers[optionIndex] };
-        // questionOption.IsCorrect = true;
-        // questionAnswers[optionIndex] = questionOption;
-        questionToAdd.Answers = questionAnswers;
+        questionToAdd.answers = questionAnswers;
         this.setState({
             questionToAdd: questionToAdd
         });
     }
 
-    onAddQuestion = () => {
-        const questionIsValid: boolean = this.validateQuestion(this.state.questionToAdd);
-        if (!questionIsValid)
-            return;
-        //TODO: fetch QuestionID
-        const questions = [...this.state.questions];
-        questions.push(this.state.questionToAdd);
-        this.setState({
-            questions: questions,
-            questionToAdd: this.emptyQuestion
-        })
+    onAddQuestion = async () => {
+        try {
+            const newQuestion: IQuestion = { ...this.state.questionToAdd };
+            const questionIsValid: boolean = this.validateQuestion(newQuestion);
+            if (!questionIsValid)
+                return;
+
+            this.props.toggleLoader();
+            const questionId: string = await this.addQuestion(newQuestion, this.state.gameId);
+            newQuestion.id = questionId;
+
+            const questions = [...this.state.questions];
+            questions.push(newQuestion);
+
+            this.setState({
+                questions: questions,
+                questionToAdd: this.emptyQuestion
+            })
+            this.props.toggleLoader();
+        } catch (err) {
+            this.props.toggleLoader();
+        }
+    }
+
+    addQuestion = async (question: IQuestion, gameId: string): Promise<string> => {
+        const resp = await axios.post<IQuestion>(`${config.apiUrl}questions/${gameId}/PostQuestion`, question);
+        console.log(resp);
+        return resp.data.id as string;
     }
 
     validateQuestion = (question: IQuestion) => {
-        if (!question || !question.QuestionText.trim())
+        if (!question || !question.questionText.trim())
             return false;
 
-        if (!question.Answers.every(answer => answer.AnswerText && answer.AnswerText.trim()))
+        if (!question.answers.every(answer => answer.answerText && answer.answerText.trim()))
             return false;
 
-        if (!question.Answers.some(answer => answer.IsCorrect))
+        if (!question.answers.some(answer => answer.isCorrect))
             return false;
 
         return true;
     }
 
-    onFinish = () => {
-        this.onAddQuestion();
+    onFinish = async () => {
+        await this.onAddQuestion();
+        this.props.history.push('/');
     }
 
     render() {
-        
+
         let addedQuestions = null;
         if (this.state.questions && this.state.questions.length > 0) {
             addedQuestions = this.state.questions.map((question, i) => {
                 return (
-                    <AddedQuestion key={question.Id ? question.Id : i} question={question} questionNumber={i + 1} />
+                    <AddedQuestion key={question.id ? question.id : i} question={question} questionNumber={i + 1} />
                 )
             })
         }

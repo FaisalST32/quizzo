@@ -94,7 +94,7 @@ namespace Quizzo.Api.Controllers
             quizRoom.Questions.Add(question);
             await _context.SaveChangesAsync();
 
-            return CreatedAtAction("GetQuestion", new { id = question.Id }, question);
+            return Ok(question);
         }
 
         [HttpDelete("{id}")]

@@ -13,13 +13,13 @@ const AddedQuestion: FunctionComponent<AddedQuestionProps> = (props) => {
         <div className={classes.addedQuestion}>
             <div style={{ fontSize: '30px' }}>
                 <small>Question no. {props.questionNumber}</small><br />
-                {props.question.QuestionText}
+                {props.question.questionText}
             </div>
-            {props.question.Answers.map((answer, i) => {
+            {props.question.answers.map((answer, i) => {
                 return (
                     <div key={i}>
-                        <small>Option {i + 1}</small> <small style={{ color: 'green' }}>{answer.IsCorrect ? '(Correct Option)' : ''}</small><br />
-                        {answer.AnswerText}
+                        <small>Option {i + 1}</small> <small style={{ color: 'green' }}>{answer.isCorrect ? '(Correct Option)' : ''}</small><br />
+                        {answer.answerText}
                     </div>
                 )
             })}

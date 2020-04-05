@@ -36,7 +36,7 @@ class Game extends Component<any, GameState> {
         console.log(userName);
         const gameData = this.getGameData(gameId, userName);
         // TODO: add logic to select current question based on time elapsed
-        if (gameData.StoppedAtUTC) {
+        if (gameData.stoppedAtUTC) {
             this.setState({
                 gameOver: true
             })
@@ -44,7 +44,7 @@ class Game extends Component<any, GameState> {
         }
         this.setState({
             gameData: gameData,
-            currentQuestion: gameData.Questions[0],
+            currentQuestion: gameData.questions[0],
             currentOptionSelected: '',
             currentTimer: 20,
             username: userName
@@ -75,8 +75,8 @@ class Game extends Component<any, GameState> {
     }
 
     onNextQuestion = () => {
-        const currentQuestionIndex: number = this.state.gameData?.Questions.findIndex(q => q.Id === this.state.currentQuestion?.Id) as number;
-        if (currentQuestionIndex === this.state.gameData?.Questions.length as number - 1) {
+        const currentQuestionIndex: number = this.state.gameData?.questions.findIndex(q => q.id === this.state.currentQuestion?.id) as number;
+        if (currentQuestionIndex === this.state.gameData?.questions.length as number - 1) {
             this.setState({
                 gameOver: true
             });
@@ -84,7 +84,7 @@ class Game extends Component<any, GameState> {
         }
         this.setState(currState => {
             return {
-                currentQuestion: currState.gameData?.Questions[currentQuestionIndex + 1],
+                currentQuestion: currState.gameData?.questions[currentQuestionIndex + 1],
                 currentTimer: 20,
                 currentOptionSelected: ''
             }
@@ -103,12 +103,12 @@ class Game extends Component<any, GameState> {
     }
 
     onViewResults = () => {
-        this.props.history.push(`/results/${this.state.gameData?.RoomCode}/${this.state.username}`)
+        this.props.history.push(`/results/${this.state.gameData?.roomCode}/${this.state.username}`)
     }
     render() {
         let gameArea = <WaitingArea />
 
-        if (this.state.gameData?.StartedAtUTC && !this.state.gameOver) {
+        if (this.state.gameData?.startedAtUTC && !this.state.gameOver) {
             gameArea = <QuestionArea timer={this.state.currentTimer}
                 question={this.state.currentQuestion}
                 selectOption={this.onSelectOption}
