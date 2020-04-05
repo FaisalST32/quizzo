@@ -104,7 +104,7 @@ class Welcome extends Component<any, IWelcomeState> {
     };
 
     addParticipantToGame = async (username: string, roomCode: string) => {
-        const participant: IParticipant = { name: username, score: 0 };
+        const participant: IParticipant = { name: username, score: 0, rank: 0 };
         return await axios.post(
             `${config.apiUrl}participants/${roomCode}/PostParticipant`,
             participant

@@ -71,15 +71,14 @@ class Results extends Component<any, IResultsState> {
     render() {
         const items = this.state.leaderboard.map((item, key) => (
             <tr key={item.name}>
+                <td>{item.rank}</td>
                 <td>{item.name}</td>
-                <td>{item.score}</td>
+                <td>{item.score} pts</td>
             </tr>
         ));
 
-        const winner: IParticipant = this.state.leaderboard.reduce(
-            (prev, curr) => {
-                return prev.score > curr.score ? prev : curr;
-            }
+        const winners: IParticipant[] = this.state.leaderboard.filter(
+            (participant) => participant.rank === 1
         );
 
         const participantScore: number = this.state.leaderboard.find(
@@ -126,7 +125,14 @@ class Results extends Component<any, IResultsState> {
                     <div className={classes.resultsHeader}>
                         And the winner is
                         <span>
-                            {winner.name} ({winner.score} pts)
+                            {winners.map((winner, i) => {
+                                return (
+                                    <div key={i}>
+                                        <span>{winner.name}</span>
+                                        <span>({winner.score} pts)</span>
+                                    </div>
+                                );
+                            })}
                         </span>
                         <img
                             className={classes.resultsGif}
