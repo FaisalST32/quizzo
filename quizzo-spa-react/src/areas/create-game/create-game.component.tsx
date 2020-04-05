@@ -104,7 +104,7 @@ class CreateGame extends Component<any, ICreateGameState> {
             if (!questionIsValid)
                 return;
 
-            this.props.toggleLoader();
+            this.props.showLoader();
             const questionId: string = await this.addQuestion(newQuestion, this.state.gameId);
             newQuestion.id = questionId;
 
@@ -115,9 +115,9 @@ class CreateGame extends Component<any, ICreateGameState> {
                 questions: questions,
                 questionToAdd: this.emptyQuestion
             })
-            this.props.toggleLoader();
+            this.props.hideLoader();
         } catch (err) {
-            this.props.toggleLoader();
+            this.props.hideLoader();
         }
     }
 

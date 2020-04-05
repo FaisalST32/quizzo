@@ -7,9 +7,9 @@ import { IQuiz } from '../../interfaces/IQuiz';
 
 interface IWelcomeState {
     showJoinBox: boolean,
-    userName: string;
+    username: string;
     inviteCode: string;
-    isLoading: boolean;
+    errorMessage: string;
 }
 
 class Welcome extends Component<any, IWelcomeState> {
@@ -18,19 +18,19 @@ class Welcome extends Component<any, IWelcomeState> {
         this.state = {
             showJoinBox: false,
             inviteCode: '',
-            userName: '',
-            isLoading: false
+            username: '',
+            errorMessage: ''
         }
     }
 
     onCreateGame = async () => {
         try {
-            this.props.toggleLoader();
+            this.props.showLoader();
             const roomCode = await this.createNewQuiz();
-            this.props.toggleLoader();
+            this.props.hideLoader();
             this.props.history.push(`/create-game/${roomCode}`);
         } catch (err) {
-            this.props.toggleLoader();
+            this.props.hideLoader();
         }
     }
 
@@ -61,34 +61,43 @@ class Welcome extends Component<any, IWelcomeState> {
 
     onChangeUserName = (e: any) => {
         this.setState({
-            userName: e.target.value.trim()
+            username: e.target.value.trim()
         })
     }
 
 
     onJoinRoom = async () => {
+        if (!this.state.username || !this.state.inviteCode) {
+            this.showError('Please enter a valid Invite Code and Name');
+            return;
+        }
 
         try {
-            this.props.toggleLoader();
+            this.props.showLoader();
             const roomExists = await this.checkRoomExists(this.state.inviteCode);
             if (!roomExists) {
-                this.props.toggleLoader();
-                //TODO: Show an error
+                this.props.hideLoader();
+                this.showError("Invite Code is invalid");
                 return;
             }
 
-            await this.addParticipantToGame(this.state.userName, this.state.inviteCode);
-            this.props.toggleLoader();
+            const resp = await this.addParticipantToGame(this.state.username, this.state.inviteCode);
+            if (resp.data === 'exists') {
+                this.showError("Username already taken");
+                this.props.hideLoader();
+                return;
+            }
 
-            this.props.history.push(`/game/${this.state.inviteCode}/${this.state.userName}`);
+            this.props.history.push(`/game/${this.state.inviteCode}/${this.state.username}`);
+            this.props.hideLoader();
         } catch (err) {
-            this.props.toggleLoader();
+            this.props.hideLoader();
         }
     }
 
     addParticipantToGame = async (username: string, roomCode: string) => {
         const participant: IParticipant = { Name: username, Score: 0 };
-        await axios.post(`${config.apiUrl}participants/${roomCode}/PostParticipant`, participant);
+        return await axios.post(`${config.apiUrl}participants/${roomCode}/PostParticipant`, participant);
     }
 
     checkRoomExists = async (roomCode: string): Promise<boolean> => {
@@ -96,6 +105,12 @@ class Welcome extends Component<any, IWelcomeState> {
             return false;
         const roomExists: boolean = (await axios.get<boolean>(`${config.apiUrl}quizrooms/roomexists/${roomCode}`)).data;
         return roomExists;
+    }
+
+    showError = (message: string) => {
+        this.setState({
+            errorMessage: message
+        });
     }
     render() {
         let welcomeActions = (
@@ -108,7 +123,7 @@ class Welcome extends Component<any, IWelcomeState> {
             welcomeActions = (
                 <div className={classes.joinGame}>
                     <input className="input large-input" type="text" value={this.state.inviteCode} onChange={this.onChangeInviteCode} placeholder="Invite Code" />
-                    <input className="input large-input" type="text" value={this.state.userName} onChange={this.onChangeUserName} placeholder="Your Name" style={{ marginTop: '20px' }} />
+                    <input className="input large-input" type="text" value={this.state.username} onChange={this.onChangeUserName} placeholder="Your Name" style={{ marginTop: '20px' }} />
                     <button className="button large-button success-button" style={{ marginTop: '20px' }} onClick={this.onJoinRoom}>Join Now</button>
                     <button className="button clear-button" onClick={this.onShowWelcomeButtons} style={{ marginTop: '20px' }}>Back</button>
                 </div>
@@ -118,12 +133,14 @@ class Welcome extends Component<any, IWelcomeState> {
             <div className={classes.welcome}>
                 <div className={classes.welcomeContainer}>
                     <div className={classes.welcomeHeader}>Welcome to <span>Quizzo</span></div>
+                    <div className={classes.error}>
+                        {this.state.errorMessage}
+                    </div>
                     <div className={classes.welcomeActions}>
                         {welcomeActions}
                     </div>
                 </div>
             </div>
-
         )
     }
 }

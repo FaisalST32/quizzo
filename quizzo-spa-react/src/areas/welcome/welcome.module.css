@@ -62,3 +62,9 @@
 .welcomeActions {
   margin-top: 25%;
 }
+
+.error {
+  color: red;
+  text-align: center;
+  margin-top: 20px;
+}
