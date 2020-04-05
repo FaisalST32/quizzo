@@ -2,17 +2,15 @@
     from {
         transform: rotate(0deg);
     }
-  
+
     to {
         transform: rotate(360deg);
     }
-  }
+}
 
 .waitingArea {
     font-size: 1.3rem;
     padding: 20px 40px;
-
-
 }
 
 .waitingAreaHeader {

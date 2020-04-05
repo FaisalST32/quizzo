@@ -1,70 +1,72 @@
 .welcome {
-  /* background: linear-gradient(
+    /* background: linear-gradient(
     to right,
     #ea384d,
     #d31027
   ); */
-  background-image: linear-gradient(
-      to right,
-      rgb(234, 56, 77, 0.7),
-      rgb(213, 16, 39, 0.7)
-    ),
-    url("../../assets/images/game-bg.jpg");
-  background-position: center;
-  background-size: cover;
-  min-height: 100vh;
-  min-width: 100vw;
-  background-attachment: fixed;
+    background-image: linear-gradient(
+            to right,
+            rgb(234, 56, 77, 0.7),
+            rgb(213, 16, 39, 0.7)
+        ),
+        url('../../assets/images/game-bg.jpg');
+    background-position: center;
+    background-size: cover;
+    min-height: 100vh;
+    min-width: 100vw;
+    background-attachment: fixed;
+    overflow-y: scroll;
 }
 
 .welcomeContainer {
-  background-color: rgba(255, 255, 255, 0.6);
-  background: white;
-  border-radius: 20px;
-  min-height: 60vh;
-  top: 10vh;
-  left: 50vw;
-  padding: 60px 40px;
-  position: relative;
-  width: 20vw;
-  min-width: 400px;
-  box-sizing: border-box;
-  box-shadow: 0 0 40px rgba(0, 0, 0, 0.2);
-  transform: translateX(-50%);
+    background-color: rgba(255, 255, 255, 0.6);
+    background: white;
+    border-radius: 20px;
+    min-height: 60vh;
+    top: 10vh;
+    left: 50vw;
+    padding: 60px 40px;
+    position: relative;
+    width: 20vw;
+    min-width: 400px;
+    box-sizing: border-box;
+    box-shadow: 0 0 40px rgba(0, 0, 0, 0.2);
+    transform: translateX(-50%);
+    margin-bottom: 20px;
 }
 
 .welcomeHeader {
-  font-size: 2rem;
-  text-align: center;
-  color: #d31027;
+    font-size: 2rem;
+    text-align: center;
+    color: #d31027;
 }
 .welcomeHeader span {
-  font-size: 4rem;
-  font-weight: bolder;
-  display: block;
-  margin-top: 20px;
+    font-size: 4rem;
+    font-weight: bolder;
+    display: block;
+    margin-top: 20px;
 }
 
 .welcomeButtons {
-  display: flex;
-  flex-flow: column nowrap;
-  justify-content: space-between;
+    display: flex;
+    flex-flow: column nowrap;
+    justify-content: space-between;
 }
 .welcomeButtons > button {
-  margin-top: 20px;
+    margin-top: 20px;
 }
 
 .joinGame {
-  display: flex;
-  flex-flow: column nowrap;
+    display: flex;
+    flex-flow: column nowrap;
 }
 
 .welcomeActions {
-  margin-top: 25%;
+    margin-top: 40px;
 }
 
 .error {
-  color: red;
-  text-align: center;
-  margin-top: 20px;
+    color: red;
+    text-align: center;
+    margin-top: 20px;
 }
