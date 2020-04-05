@@ -1,6 +1,8 @@
 import React, { Component } from 'react';
 import classes from './results.module.css';
 import victoryGif from '../../assets/gifs/lfc_victory.gif';
+import { config } from '../../environments/environment.dev';
+import axios from 'axios';
 // import victoryGif2 from '../../assets/gifs/lfc_victory.gif';
 
 import { IParticipant } from '../../interfaces/IParticipant';
@@ -19,26 +21,31 @@ class Results extends Component<any, IResultsState> {
     constructor(props: any) {
         super(props);
         this.state = {
-            leaderboard: [
-                { Id: '1', Name: 'Faisal', Score: 100 },
-                { Id: '2', Name: 'Krishna', Score: 90 },
-                { Id: '3', Name: 'Panda', Score: 80 },
-                { Id: '4', Name: 'Koala', Score: 70 },
-            ],
+            leaderboard: [],
             showLeaderboard: false,
             username: '',
             gameId: '',
         };
     }
 
-    componentDidMount = () => {
+    componentDidMount = async () => {
         const username = this.props.match.params.username;
         const gameId = this.props.match.params.id;
-        //TODO: Api call
+        const leaderboard = await this.getLeaderboard(gameId);
         this.setState({
             username: username,
             gameId: gameId,
+            leaderboard: leaderboard,
         });
+    };
+
+    getLeaderboard = async (gameId: string): Promise<IParticipant[]> => {
+        const resp = await axios.get<IParticipant[]>(
+            `${config.apiUrl}QuizRooms/${gameId}/GetLeaderboard`
+        );
+        console.log(resp);
+        const leaderboard = resp.data;
+        return leaderboard;
     };
 
     onShowResults = () => {
@@ -63,21 +70,21 @@ class Results extends Component<any, IResultsState> {
 
     render() {
         const items = this.state.leaderboard.map((item, key) => (
-            <tr key={item.Name}>
-                <td>{item.Name}</td>
-                <td>{item.Score}</td>
+            <tr key={item.name}>
+                <td>{item.name}</td>
+                <td>{item.score}</td>
             </tr>
         ));
 
         const winner: IParticipant = this.state.leaderboard.reduce(
             (prev, curr) => {
-                return prev.Score > curr.Score ? prev : curr;
+                return prev.score > curr.score ? prev : curr;
             }
         );
 
         const participantScore: number = this.state.leaderboard.find(
-            (p) => p.Name.toLowerCase() === this.state.username.toLowerCase()
-        )?.Score as number;
+            (p) => p.name.toLowerCase() === this.state.username.toLowerCase()
+        )?.score as number;
 
         let resultsActions = (
             <div className={classes.resultsButtons}>
@@ -119,7 +126,7 @@ class Results extends Component<any, IResultsState> {
                     <div className={classes.resultsHeader}>
                         And the winner is
                         <span>
-                            {winner.Name} ({winner.Score} pts)
+                            {winner.name} ({winner.score} pts)
                         </span>
                         <img
                             className={classes.resultsGif}

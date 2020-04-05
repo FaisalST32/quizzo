@@ -1,5 +1,5 @@
 export interface IParticipant {
-    Id?: string;
-    Name: string;
-    Score: number;
+    id?: string;
+    name: string;
+    score: number;
 }

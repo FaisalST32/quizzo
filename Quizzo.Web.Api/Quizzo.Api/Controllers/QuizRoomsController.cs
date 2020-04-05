@@ -216,6 +216,22 @@ namespace Quizzo.Api.Controllers
                 leaderboard.Add(participant);
             }
 
+            leaderboard = leaderboard.OrderByDescending(l => l.Score).ToList();
+
+            var currentScore = 0;
+            var rank = 1;
+
+            foreach (var item in leaderboard)
+            {
+                if (item.Score < currentScore)
+                {
+                    rank++;
+                }
+
+                item.Rank = rank;
+                currentScore = item.Score;
+            }
+
             return Ok(leaderboard.OrderByDescending(l => l.Score));
         }
 
@@ -265,7 +281,7 @@ namespace Quizzo.Api.Controllers
         public async Task<IActionResult> CheckRoomExists(string roomCode)
         {
             if (string.IsNullOrEmpty(roomCode))
-            { 
+            {
                 return Ok(false);
             }
 
@@ -289,7 +305,7 @@ namespace Quizzo.Api.Controllers
         {
             var quiz = await _context.QuizRooms.Select(q => q.RoomCode).SingleOrDefaultAsync(q => q.ToLower() == roomCode.ToLower());
             if (quiz == null)
-            { 
+            {
                 return null;
             }
 
@@ -297,7 +313,7 @@ namespace Quizzo.Api.Controllers
                 .FirstOrDefaultAsync(p => p.QuizRoom.RoomCode.ToLower() == roomCode.ToLower() && p.Name.ToLower() == username.ToLower());
 
             if (participant == null)
-            { 
+            {
                 return null;
             }
 
