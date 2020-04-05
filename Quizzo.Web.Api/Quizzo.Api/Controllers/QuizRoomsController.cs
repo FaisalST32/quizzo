@@ -68,7 +68,7 @@ namespace Quizzo.Api.Controllers
                 return NotFound();
             }
 
-            var questionsAlreadyRespondedTo = GetQuestionsAlreadyRespondedTo(roomCode, userName);
+            var questionsAlreadyRespondedTo = await GetQuestionsAlreadyRespondedTo(roomCode, userName);
 
             var questions = quizRoom.Questions
                 .Where(q => !questionsAlreadyRespondedTo.Contains(q.Id))
@@ -265,7 +265,10 @@ namespace Quizzo.Api.Controllers
         public async Task<IActionResult> CheckRoomExists(string roomCode)
         {
             if (string.IsNullOrEmpty(roomCode))
+            { 
                 return Ok(false);
+            }
+
             var roomExists = await _context.QuizRooms.AnyAsync(qr => qr.RoomCode.ToLower() == roomCode.ToLower());
             return Ok(roomExists);
         }
@@ -282,22 +285,21 @@ namespace Quizzo.Api.Controllers
               .Select(s => s[random.Next(s.Length)]).ToArray());
         }
 
-        private List<Guid> GetQuestionsAlreadyRespondedTo(string roomCode, string userName)
+        private async Task<List<Guid>> GetQuestionsAlreadyRespondedTo(string roomCode, string userName)
         {
-
-            var quiz = _context.QuizRooms
-                .Include(q => q.Participants)
-                .ThenInclude(p => p.Responses)
-                .FirstOrDefault(qz => qz.RoomCode.ToLower() == roomCode.ToLower());
-
+            var quiz = await _context.QuizRooms.Select(q => q.RoomCode).SingleOrDefaultAsync(q => q.ToLower() == roomCode.ToLower());
             if (quiz == null)
+            { 
                 return null;
+            }
 
-            var participant = quiz.Participants
-                .FirstOrDefault(p => p.Name.ToLower() == userName.ToLower());
+            var participant = await _context.Participants.Include(c => c.Responses)
+                .FirstOrDefaultAsync(p => p.QuizRoom.RoomCode.ToLower() == roomCode.ToLower() && p.Name.ToLower() == userName.ToLower());
 
             if (participant == null)
+            { 
                 return null;
+            }
 
             return participant.Responses.Select(r => r.QuestionId).ToList();
         }

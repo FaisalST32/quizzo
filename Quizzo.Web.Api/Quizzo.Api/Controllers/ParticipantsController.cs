@@ -75,16 +75,21 @@ namespace Quizzo.Api.Controllers
         }
 
         [HttpPost("{roomCode}/PostParticipant")]
-        public async Task<ActionResult<Participant>> PostParticipant(string roomCode, ParticipantDto participantDto)
+        public async Task<IActionResult> PostParticipant(string roomCode, ParticipantDto participantDto)
         {
             var participant = _mapper.Map<Participant>(participantDto);
 
             var quizRoom = await _context.QuizRooms.Include(q => q.Participants).SingleAsync(q => q.RoomCode == roomCode);
 
+            if (quizRoom.Participants.Any(p => p.Name.ToLower() == participant.Name.ToLower()))
+            {
+                return Ok("exists");
+            }
+
             quizRoom.Participants.Add(participant);
             await _context.SaveChangesAsync();
 
-            return CreatedAtAction("GetParticipant", new { id = participant.Id }, participant);
+            return Ok(participant);
         }
 
         [HttpDelete("{id}")]

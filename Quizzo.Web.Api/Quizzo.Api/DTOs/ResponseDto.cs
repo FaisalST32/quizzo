@@ -8,8 +8,7 @@ namespace Quizzo.Api.DTOs
         [Required]
         public Guid QuestionId { get; set; }
 
-        [Required]
-        public Guid AnswerId { get; set; }
+        public Guid? AnswerId { get; set; }
 
         [Required]
         public long TimeTaken { get; set; }
