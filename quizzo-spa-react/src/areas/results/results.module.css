@@ -1,0 +1,64 @@
+.results {
+    background-image: linear-gradient(
+            to right,
+            rgba(255, 69, 0, 0.7),
+            rgb(255, 88, 26, 0.7)
+        ),
+        url('../../assets/images/game-bg.jpg');
+    background-position: center;
+    background-size: cover;
+    min-height: 100vh;
+    min-width: 100vw;
+    background-attachment: fixed;
+}
+
+.resultsContainer {
+    background-color: rgba(255, 255, 255, 0.6);
+    background: white;
+    border-radius: 20px;
+    min-height: 60vh;
+    top: 10vh;
+    left: 50vw;
+    padding: 60px 40px;
+    position: relative;
+    width: 20vw;
+    min-width: 400px;
+    box-sizing: border-box;
+    box-shadow: 0 0 40px rgba(0, 0, 0, 0.2);
+    transform: translateX(-50%);
+}
+
+.resultsHeader {
+    font-size: 2rem;
+    text-align: center;
+    color: #d31027;
+}
+.resultsHeader span {
+    font-size: 4rem;
+    font-weight: bolder;
+    display: block;
+    margin-top: 20px;
+}
+
+.resultsButtons {
+    display: flex;
+    flex-flow: column nowrap;
+    justify-content: space-between;
+}
+.resultsButtons > button {
+    margin-top: 20px;
+}
+
+.resultsGif {
+    width: 80%;
+    height: 80%;
+}
+
+.resultsList {
+    font-size: 1.5rem;
+    color: #d31027;
+}
+
+.resultsActions {
+    margin-top: 25%;
+}

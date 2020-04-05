@@ -5,18 +5,20 @@ import Game from './areas/game/game.component';
 import CreateGame from './areas/create-game/create-game.component';
 import Welcome from './areas/welcome/welcome.component';
 import Results from './areas/results/results.component';
+import Solution from './areas/solution/solution.component';
 
 function App() {
-  return (
-    <BrowserRouter>
-      <Switch>
-        <Route exact component={Game} path="/game/:id/:username" />
-        <Route component={CreateGame} path="/create-game" />
-        <Route component={Results} path="/results/:id/:username" />
-        <Route component={Welcome} path="/" />
-      </Switch>
-    </BrowserRouter>
-  );
+    return (
+        <BrowserRouter>
+            <Switch>
+                <Route exact component={Game} path="/game/:id/:username" />
+                <Route component={CreateGame} path="/create-game" />
+                <Route component={Results} path="/results/:id/:username" />
+                <Route component={Solution} path="/solution/:id/:username" />
+                <Route component={Welcome} path="/" />
+            </Switch>
+        </BrowserRouter>
+    );
 }
 
 export default App;
