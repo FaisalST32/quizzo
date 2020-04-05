@@ -219,8 +219,8 @@ namespace Quizzo.Api.Controllers
             return Ok(leaderboard.OrderByDescending(l => l.Score));
         }
 
-        [HttpGet("{roomCode}/{participantId}/GetSolution")]
-        public async Task<IActionResult> GetSolution(string roomCode, Guid participantId)
+        [HttpGet("{roomCode}/{username}/GetSolution")]
+        public async Task<IActionResult> GetSolution(string roomCode, string username)
         {
             var quizRoom = await _context.QuizRooms.Select(q => new { q.RoomCode, q.StartedAtUtc, q.StoppedAtUtc }).SingleAsync(q => q.RoomCode == roomCode);
 
@@ -230,8 +230,8 @@ namespace Quizzo.Api.Controllers
             }
 
             var solutions = new List<SolutionDto>();
-            var participant = await _context.Participants.Include(p => p.Responses).SingleAsync(p => p.Id == participantId);
-            var questions = await _context.Questions.Include(q => q.Answers).OrderByDescending(q => q.CreatedOnUtc).Where(q => q.QuizRoom.RoomCode == roomCode).ToListAsync();
+            var participant = await _context.Participants.Include(p => p.Responses).SingleAsync(p => p.Name.ToLower() == username.ToLower());
+            var questions = await _context.Questions.Include(q => q.Answers).OrderBy(q => q.CreatedOnUtc).Where(q => q.QuizRoom.RoomCode == roomCode).ToListAsync();
 
             foreach (var item in questions)
             {

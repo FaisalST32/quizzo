@@ -1,6 +1,6 @@
 export interface ISolution {
-    QuestionText: string;
-    SelectedAnswerText: string;
-    CorrectAnswerText: string;
-    Score: number;
+    questionText: string;
+    selectedAnswerText: string;
+    correctAnswerText: string;
+    score: number;
 }

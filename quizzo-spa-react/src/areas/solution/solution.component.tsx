@@ -1,7 +1,8 @@
 import React, { Component } from 'react';
 import classes from './solution.module.css';
 import { ISolution } from '../../interfaces/ISolution';
-import { mockSolutions } from '../../mock/solution.mock';
+import { config } from '../../environments/environment.dev';
+import axios from 'axios';
 
 interface ISolutionState {
     solutions?: ISolution[];
@@ -18,10 +19,10 @@ class Solution extends Component<any, ISolutionState> {
             gameId: '',
         };
     }
-    componentDidMount = () => {
+    componentDidMount = async () => {
         const gameId = this.props.match.params.id;
         const username = this.props.match.params.username;
-        const solutions = this.getSolutions(gameId, username);
+        const solutions = await this.getSolutions(gameId, username);
         this.setState({
             solutions: solutions,
             username: username,
@@ -35,16 +36,21 @@ class Solution extends Component<any, ISolutionState> {
         );
     };
 
-    getSolutions = (gameId: string, userName: string) => {
-        //TODO: Fetch solutions from API
-
-        const solutions: ISolution[] = mockSolutions;
+    getSolutions = async (
+        gameId: string,
+        username: string
+    ): Promise<ISolution[]> => {
+        const resp = await axios.get<ISolution[]>(
+            `${config.apiUrl}QuizRooms/${gameId}/${username}/GetSolution`
+        );
+        console.log(resp);
+        const solutions = resp.data;
         return solutions;
     };
 
     render() {
         const totalScore = this.state.solutions?.reduce(
-            (prev, next) => prev + next.Score,
+            (prev, next) => prev + next.score,
             0
         );
 
@@ -54,30 +60,30 @@ class Solution extends Component<any, ISolutionState> {
                     <div className={classes.solutionHeader}>Solution</div>
                     {this.state.solutions?.map((solution, i) => {
                         return (
-                            <div className={classes.solutionContent}>
+                            <div key={i} className={classes.solutionContent}>
                                 <div>
                                     Question:{' '}
                                     <span className={classes.solutionQuestion}>
-                                        {solution.QuestionText}
+                                        {solution.questionText}
                                     </span>
                                 </div>
                                 <div>
-                                    Correct Answer: {solution.CorrectAnswerText}
+                                    Correct Answer: {solution.correctAnswerText}
                                 </div>
                                 <div>
                                     Your Answer:{' '}
                                     <span
                                         className={
-                                            solution.CorrectAnswerText ===
-                                            solution.SelectedAnswerText
+                                            solution.correctAnswerText ===
+                                            solution.selectedAnswerText
                                                 ? classes.solutionCorrect
                                                 : classes.solutionWrong
                                         }
                                     >
-                                        {solution.SelectedAnswerText}
+                                        {solution.selectedAnswerText}
                                     </span>
                                 </div>
-                                <div>Your Score: {solution.Score}</div>
+                                <div>Your Score: {solution.score}</div>
                             </div>
                         );
                     })}
