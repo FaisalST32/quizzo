@@ -8,22 +8,22 @@ export const mockQuiz: IQuiz = {
             questionText: 'Who created this app 1?',
             answers: [
                 {
-                    Id: 'kjdjf-dfkdjf-dsf211',
+                    id: 'kjdjf-dfkdjf-dsf211',
                     answerText: 'Hahaha',
                     isCorrect: false
                 },
                 {
-                    Id: 'kjdjf-dfkdjf-dsf212',
+                    id: 'kjdjf-dfkdjf-dsf212',
                     answerText: 'Faisal',
                     isCorrect: false
                 },
                 {
-                    Id: 'kjdjf-dfkdjf-dsf213',
+                    id: 'kjdjf-dfkdjf-dsf213',
                     answerText: 'Krishna',
                     isCorrect: false
                 },
                 {
-                    Id: 'kjdjf-dfkdjf-dsf214',
+                    id: 'kjdjf-dfkdjf-dsf214',
                     answerText: 'Two wannabes who had nothing better to do',
                     isCorrect: true
                 },
@@ -34,22 +34,22 @@ export const mockQuiz: IQuiz = {
             questionText: 'Who created this app 2?',
             answers: [
                 {
-                    Id: 'kjdjf-dfkdjf-dsf221',
+                    id: 'kjdjf-dfkdjf-dsf221',
                     answerText: 'Hahaha',
                     isCorrect: false
                 },
                 {
-                    Id: 'kjdjf-dfkdjf-dsf222',
+                    id: 'kjdjf-dfkdjf-dsf222',
                     answerText: 'Faisal',
                     isCorrect: false
                 },
                 {
-                    Id: 'kjdjf-dfkdjf-dsf223',
+                    id: 'kjdjf-dfkdjf-dsf223',
                     answerText: 'Krishna',
                     isCorrect: false
                 },
                 {
-                    Id: 'kjdjf-dfkdjf-dsf224',
+                    id: 'kjdjf-dfkdjf-dsf224',
                     answerText: 'Two wannabes who had nothing better to do',
                     isCorrect: true
                 },
@@ -60,22 +60,22 @@ export const mockQuiz: IQuiz = {
             questionText: 'Who created this app 3?',
             answers: [
                 {
-                    Id: 'kjdjf-dfkdjf-dsf231',
+                    id: 'kjdjf-dfkdjf-dsf231',
                     answerText: 'Hahaha',
                     isCorrect: false
                 },
                 {
-                    Id: 'kjdjf-dfkdjf-dsf232',
+                    id: 'kjdjf-dfkdjf-dsf232',
                     answerText: 'Faisal',
                     isCorrect: false
                 },
                 {
-                    Id: 'kjdjf-dfkdjf-dsf233',
+                    id: 'kjdjf-dfkdjf-dsf233',
                     answerText: 'Krishna',
                     isCorrect: false
                 },
                 {
-                    Id: 'kjdjf-dfkdjf-dsf234',
+                    id: 'kjdjf-dfkdjf-dsf234',
                     answerText: 'Two wannabes who had nothing better to do',
                     isCorrect: true
                 },
@@ -86,22 +86,22 @@ export const mockQuiz: IQuiz = {
             questionText: 'Who created this app 4?',
             answers: [
                 {
-                    Id: 'kjdjf-dfkdjf-dsf241',
+                    id: 'kjdjf-dfkdjf-dsf241',
                     answerText: 'Hahaha',
                     isCorrect: false
                 },
                 {
-                    Id: 'kjdjf-dfkdjf-dsf242',
+                    id: 'kjdjf-dfkdjf-dsf242',
                     answerText: 'Faisal',
                     isCorrect: false
                 },
                 {
-                    Id: 'kjdjf-dfkdjf-dsf2443',
+                    id: 'kjdjf-dfkdjf-dsf2443',
                     answerText: 'Krishna',
                     isCorrect: false
                 },
                 {
-                    Id: 'kjdjf-dfkdjf-dsf244',
+                    id: 'kjdjf-dfkdjf-dsf244',
                     answerText: 'Two wannabes who had nothing better to do',
                     isCorrect: true
                 },
@@ -112,27 +112,27 @@ export const mockQuiz: IQuiz = {
             questionText: 'Who created this app 5?',
             answers: [
                 {
-                    Id: 'kjdjf-dfkdjf-dsf251',
+                    id: 'kjdjf-dfkdjf-dsf251',
                     answerText: 'Hahaha',
                     isCorrect: false
                 },
                 {
-                    Id: 'kjdjf-dfkdjf-dsf252',
+                    id: 'kjdjf-dfkdjf-dsf252',
                     answerText: 'Faisal',
                     isCorrect: false
                 },
                 {
-                    Id: 'kjdjf-dfkdjf-dsf253',
+                    id: 'kjdjf-dfkdjf-dsf253',
                     answerText: 'Krishna',
                     isCorrect: false
                 },
                 {
-                    Id: 'kjdjf-dfkdjf-dsf254',
+                    id: 'kjdjf-dfkdjf-dsf254',
                     answerText: 'Two wannabes who had nothing better to do',
                     isCorrect: true
                 },
             ]
         },
     ],
-    startedAtUTC: new Date()
+    startedAtUtc: new Date()
 }

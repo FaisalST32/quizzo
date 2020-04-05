@@ -12,15 +12,15 @@ type QuestionAreaProps = {
 const QuestionArea: FunctionComponent<QuestionAreaProps> = props => {
     const optionLabels = ['A', 'B', 'C', 'D'];
     const options = props.question?.answers.map((answer, i) => {
-        const isSelected = props.selectedOption === answer.Id;
+        const isSelected = props.selectedOption === answer.id;
         const cssClasses = [classes.option]
         if (isSelected) {
             cssClasses.push(classes.selected)
         }
         return (
-            <div key={answer.Id}
+            <div key={answer.id}
                 className={cssClasses.join(' ')}
-                onClick={() => { props.selectOption(props.question?.id, answer.Id) }}>
+                onClick={() => { props.selectOption(props.question?.id, answer.id) }}>
                 <small>{optionLabels[i]}.</small> {answer.answerText}
             </div>
         )

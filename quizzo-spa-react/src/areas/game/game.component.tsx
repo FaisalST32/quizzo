@@ -6,6 +6,8 @@ import WaitingArea from './waiting-area/waiting-area.component';
 import { IQuestion } from '../../interfaces/IQuestion';
 import QuestionArea from './question-area/question-area.component';
 import GameOver from './game-over/game-over.component';
+import axios from 'axios';
+import { config } from '../../environments/environment.dev';
 
 type GameState = {
     gameData?: IQuiz,
@@ -13,7 +15,8 @@ type GameState = {
     currentTimer: number,
     currentOptionSelected: string,
     gameOver: boolean,
-    username: string
+    username: string,
+    gameStarted: boolean
 }
 
 class Game extends Component<any, GameState> {
@@ -26,37 +29,71 @@ class Game extends Component<any, GameState> {
             currentTimer: 20,
             currentOptionSelected: '',
             gameOver: false,
-            username: ''
+            username: '',
+            gameStarted: false
         }
     }
-    componentDidMount = () => {
+    componentDidMount = async () => {
         const gameId = this.props.match.params.id;
         const userName = this.props.match.params.username;
         console.log(gameId);
         console.log(userName);
-        const gameData = this.getGameData(gameId, userName);
+        const gameData = await this.getGameData(gameId, userName);
+
+        console.log(gameData);
         // TODO: add logic to select current question based on time elapsed
-        if (gameData.stoppedAtUTC) {
+        if (gameData.stoppedAtUtc || !gameData.questions.length) {
             this.setState({
                 gameOver: true
             })
             return;
         }
+        const gameStarted = !!gameData.startedAtUtc;
+        console.log(gameData.startedAtUtc);
+
         this.setState({
             gameData: gameData,
             currentQuestion: gameData.questions[0],
             currentOptionSelected: '',
             currentTimer: 20,
-            username: userName
+            username: userName,
+            gameStarted: gameStarted
         });
-        this.beginTimer();
+
+        this.checkIfGameStarted(gameId);
+        // this.beginTimer();
     }
 
-    getGameData = (gameId: string, userName: string) => {
-        //TODO: Fetch quiz from API
+    getGameData = async (gameId: string, userName: string): Promise<IQuiz> => {
+        const resp = await axios.get<{ quizRoom: IQuiz, questions: IQuestion[] }>(`${config.apiUrl}quizrooms/${gameId}/${userName}`);
+        console.log(resp);
 
-        const quizFound: IQuiz = mockQuiz;
+        const quizFound: IQuiz = resp.data.quizRoom;
+        quizFound.questions = resp.data.questions;
         return quizFound;
+    }
+
+    checkIfGameStarted = async (gameId: string) => {
+        if (this.state.gameStarted) {
+            this.beginTimer();
+            return;
+        }
+        const interval = setInterval(async () => {
+            if (this.state.gameStarted) {
+                clearInterval(interval);
+                this.beginTimer();
+            }
+
+            const resp = await axios.get(`${config.apiUrl}QuizRooms/${gameId}/IsQuizActive`);
+            console.log(resp);
+            if (resp && resp.data) {
+                clearInterval(interval);
+                this.setState({
+                    gameStarted: true
+                });
+                this.beginTimer();
+            }
+        }, 5000)
     }
 
     beginTimer = () => {
@@ -75,6 +112,9 @@ class Game extends Component<any, GameState> {
     }
 
     onNextQuestion = () => {
+        if (!this.state.currentOptionSelected) {
+            this.saveResponse(this.state.currentQuestion?.id as string);
+        }
         const currentQuestionIndex: number = this.state.gameData?.questions.findIndex(q => q.id === this.state.currentQuestion?.id) as number;
         if (currentQuestionIndex === this.state.gameData?.questions.length as number - 1) {
             this.setState({
@@ -92,14 +132,22 @@ class Game extends Component<any, GameState> {
         this.beginTimer();
     }
 
-    onSelectOption = (questionId: string, optionId: string) => {
+    onSelectOption = async (questionId: string, optionId: string) => {
         if (this.state.currentOptionSelected) {
             return;
         }
-        //TODO: Api call
+
+        await this.saveResponse(questionId, optionId)
+
         this.setState({
             currentOptionSelected: optionId
-        })
+        });
+    }
+
+    saveResponse = async (questionId: string, optionId?: string) => {
+        const body = { questionId, answerId: optionId, timeTaken: (20 - this.state.currentTimer) };
+        await axios.post(`${config.apiUrl}responses/${this.state.username}/postResponse`, body);
+        return;
     }
 
     onViewResults = () => {
@@ -108,7 +156,7 @@ class Game extends Component<any, GameState> {
     render() {
         let gameArea = <WaitingArea />
 
-        if (this.state.gameData?.startedAtUTC && !this.state.gameOver) {
+        if (this.state.gameStarted && !this.state.gameOver) {
             gameArea = <QuestionArea timer={this.state.currentTimer}
                 question={this.state.currentQuestion}
                 selectOption={this.onSelectOption}

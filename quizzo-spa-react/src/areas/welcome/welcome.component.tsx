@@ -55,13 +55,13 @@ class Welcome extends Component<any, IWelcomeState> {
 
     onChangeInviteCode = (e: any) => {
         this.setState({
-            inviteCode: e.target.value
+            inviteCode: e.target.value.trim()
         })
     }
 
     onChangeUserName = (e: any) => {
         this.setState({
-            userName: e.target.value
+            userName: e.target.value.trim()
         })
     }
 
@@ -73,6 +73,7 @@ class Welcome extends Component<any, IWelcomeState> {
             const roomExists = await this.checkRoomExists(this.state.inviteCode);
             if (!roomExists) {
                 this.props.toggleLoader();
+                //TODO: Show an error
                 return;
             }
 
@@ -87,13 +88,13 @@ class Welcome extends Component<any, IWelcomeState> {
 
     addParticipantToGame = async (username: string, roomCode: string) => {
         const participant: IParticipant = { Name: username, Score: 0 };
-        await axios.post(`${config.apiUrl}${roomCode}/PostParticipant`, participant);
+        await axios.post(`${config.apiUrl}participants/${roomCode}/PostParticipant`, participant);
     }
 
     checkRoomExists = async (roomCode: string): Promise<boolean> => {
         if (!roomCode)
             return false;
-        const roomExists: boolean = (await axios.get<boolean>(`${config.apiUrl}roomexists/${roomCode}`)).data;
+        const roomExists: boolean = (await axios.get<boolean>(`${config.apiUrl}quizrooms/roomexists/${roomCode}`)).data;
         return roomExists;
     }
     render() {
