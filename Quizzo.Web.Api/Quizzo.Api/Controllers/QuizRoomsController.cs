@@ -54,6 +54,40 @@ namespace Quizzo.Api.Controllers
             return Ok(new { quizRoom = quizRoomDto, questions });
         }
 
+        [HttpGet("{roomCode}/{userName}")]
+        public async Task<IActionResult> GetQuizRoomForParticipant(string roomCode, string userName)
+        {
+            var quizRoom = await _context.QuizRooms
+                .Include(q => q.Participants)
+                .Include(q => q.Questions)
+                .ThenInclude(q => q.Answers)
+                .SingleOrDefaultAsync(q => q.RoomCode == roomCode && q.Participants.Any(p => p.Name.ToLower() == userName.ToLower()));
+
+            if (quizRoom == null)
+            {
+                return NotFound();
+            }
+
+            var questionsAlreadyRespondedTo = GetQuestionsAlreadyRespondedTo(roomCode, userName);
+
+            var questions = quizRoom.Questions
+                .Where(q => !questionsAlreadyRespondedTo.Contains(q.Id))
+                .Select(q => new QuestionDto()
+                {
+                    Id = q.Id,
+                    QuestionText = q.QuestionText,
+                    Answers = q.Answers.Select(a => new AnswerDto()
+                    {
+                        Id = a.Id,
+                        AnswerText = a.AnswerText
+                    }).ToList()
+                });
+
+            var quizRoomDto = _mapper.Map<QuizRoomDto>(quizRoom);
+
+            return Ok(new { quizRoom = quizRoomDto, questions });
+        }
+
         [HttpPut("{id}")]
         [ApiExplorerSettings(IgnoreApi = true)]
         public async Task<IActionResult> PutQuizRoom(Guid id, QuizRoom quizRoom)
@@ -246,6 +280,26 @@ namespace Quizzo.Api.Controllers
             const string chars = "ABCDEFGHIJKLMNOPQRSTUVWXYZ0123456789";
             return new string(Enumerable.Repeat(chars, length)
               .Select(s => s[random.Next(s.Length)]).ToArray());
+        }
+
+        private List<Guid> GetQuestionsAlreadyRespondedTo(string roomCode, string userName)
+        {
+
+            var quiz = _context.QuizRooms
+                .Include(q => q.Participants)
+                .ThenInclude(p => p.Responses)
+                .FirstOrDefault(qz => qz.RoomCode.ToLower() == roomCode.ToLower());
+
+            if (quiz == null)
+                return null;
+
+            var participant = quiz.Participants
+                .FirstOrDefault(p => p.Name.ToLower() == userName.ToLower());
+
+            if (participant == null)
+                return null;
+
+            return participant.Responses.Select(r => r.QuestionId).ToList();
         }
     }
 }
