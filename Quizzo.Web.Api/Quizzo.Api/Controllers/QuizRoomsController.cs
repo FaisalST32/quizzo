@@ -54,21 +54,21 @@ namespace Quizzo.Api.Controllers
             return Ok(new { quizRoom = quizRoomDto, questions });
         }
 
-        [HttpGet("{roomCode}/{userName}")]
-        public async Task<IActionResult> GetQuizRoomForParticipant(string roomCode, string userName)
+        [HttpGet("{roomCode}/{username}")]
+        public async Task<IActionResult> GetQuizRoomForParticipant(string roomCode, string username)
         {
             var quizRoom = await _context.QuizRooms
                 .Include(q => q.Participants)
                 .Include(q => q.Questions)
                 .ThenInclude(q => q.Answers)
-                .SingleOrDefaultAsync(q => q.RoomCode == roomCode && q.Participants.Any(p => p.Name.ToLower() == userName.ToLower()));
+                .SingleOrDefaultAsync(q => q.RoomCode == roomCode && q.Participants.Any(p => p.Name.ToLower() == username.ToLower()));
 
             if (quizRoom == null)
             {
                 return NotFound();
             }
 
-            var questionsAlreadyRespondedTo = await GetQuestionsAlreadyRespondedTo(roomCode, userName);
+            var questionsAlreadyRespondedTo = await GetQuestionsAlreadyRespondedTo(roomCode, username);
 
             var questions = quizRoom.Questions
                 .Where(q => !questionsAlreadyRespondedTo.Contains(q.Id))
@@ -285,7 +285,7 @@ namespace Quizzo.Api.Controllers
               .Select(s => s[random.Next(s.Length)]).ToArray());
         }
 
-        private async Task<List<Guid>> GetQuestionsAlreadyRespondedTo(string roomCode, string userName)
+        private async Task<List<Guid>> GetQuestionsAlreadyRespondedTo(string roomCode, string username)
         {
             var quiz = await _context.QuizRooms.Select(q => q.RoomCode).SingleOrDefaultAsync(q => q.ToLower() == roomCode.ToLower());
             if (quiz == null)
@@ -294,7 +294,7 @@ namespace Quizzo.Api.Controllers
             }
 
             var participant = await _context.Participants.Include(c => c.Responses)
-                .FirstOrDefaultAsync(p => p.QuizRoom.RoomCode.ToLower() == roomCode.ToLower() && p.Name.ToLower() == userName.ToLower());
+                .FirstOrDefaultAsync(p => p.QuizRoom.RoomCode.ToLower() == roomCode.ToLower() && p.Name.ToLower() == username.ToLower());
 
             if (participant == null)
             { 

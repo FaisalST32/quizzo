@@ -74,12 +74,12 @@ namespace Quizzo.Api.Controllers
             return NoContent();
         }
 
-        [HttpPost("{participantId}/PostResponse")]
-        public async Task<ActionResult<Response>> PostResponse(Guid participantId, ResponseDto responseDto)
+        [HttpPost("{username}/PostResponse")]
+        public async Task<IActionResult> PostResponse(string username, ResponseDto responseDto)
         {
             var response = _mapper.Map<Response>(responseDto);
 
-            var participantResponse = await _context.Participants.Include(c => c.Responses).SingleAsync(p => p.Id == participantId);
+            var participantResponse = await _context.Participants.Include(c => c.Responses).SingleAsync(p => p.Name.ToLower() == username.ToLower());
 
             if (!participantResponse.Responses.Any(r => r.QuestionId == response.QuestionId))
             {
@@ -87,7 +87,7 @@ namespace Quizzo.Api.Controllers
                 await _context.SaveChangesAsync();
             }
 
-            return CreatedAtAction("GetResponse", new { id = response.Id }, response);
+            return Ok();
         }
 
         [HttpDelete("{id}")]
