@@ -11,7 +11,7 @@ type AddedQuestionProps = {
 const AddedQuestion: FunctionComponent<AddedQuestionProps> = (props) => {
     return (
         <div className={classes.addedQuestion}>
-            <div style={{ fontSize: '30px' }}>
+            <div className={classes.questionText}>
                 <small>Question no. {props.questionNumber}</small><br />
                 {props.question.questionText}
             </div>

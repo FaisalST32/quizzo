@@ -81,3 +81,13 @@ code {
 .block {
   display: block;
 }
+
+@media screen and (max-width: 991px) {
+  .large-input {
+    font-size: 1.5rem;
+    font-weight: bolder;
+    padding: 20px 30px;
+    letter-spacing: 0.4rem;
+    text-align: center;
+  }
+}

@@ -40,12 +40,16 @@ class Solution extends Component<any, ISolutionState> {
         gameId: string,
         username: string
     ): Promise<ISolution[]> => {
-        const resp = await axios.get<ISolution[]>(
-            `${config.apiUrl}QuizRooms/${gameId}/${username}/GetSolution`
-        );
-        console.log(resp);
-        const solutions = resp.data;
-        return solutions;
+        try {
+            const resp = await axios.get<ISolution[]>(
+                `${config.apiUrl}QuizRooms/${gameId}/${username}/GetSolution`
+            );
+            console.log(resp);
+            const solutions = resp.data;
+            return solutions;
+        } catch (err) {
+            return [];
+        }
     };
 
     render() {

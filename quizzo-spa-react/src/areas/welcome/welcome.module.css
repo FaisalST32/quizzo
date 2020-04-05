@@ -1,9 +1,5 @@
 .welcome {
-    /* background: linear-gradient(
-    to right,
-    #ea384d,
-    #d31027
-  ); */
+
     background-image: linear-gradient(
             to right,
             rgb(234, 56, 77, 0.7),
@@ -70,3 +66,13 @@
     text-align: center;
     margin-top: 20px;
 }
+
+
+@media screen and (max-width: 991px) {
+    .welcomeContainer {
+        top: 5vh;
+        padding: 30px 30px;
+        min-width: 90vw;
+        margin-bottom: 100px;
+    }
+  }

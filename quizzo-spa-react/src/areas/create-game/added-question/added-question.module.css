@@ -1,13 +1,26 @@
 .addedQuestion {
-    font-size: 20px;
-    padding: 10px 20px;
-    margin: 15px 0;
-    box-shadow: 0 0 10px rgba(0,0,0,.3);
-    border-radius: 5px;
-    overflow: hidden;
+  font-size: 20px;
+  padding: 10px 20px;
+  margin: 15px 0;
+  box-shadow: 0 0 10px rgba(0, 0, 0, 0.3);
+  border-radius: 5px;
+  overflow: hidden;
 }
-.addedQuestion small {
-    font-size: 10px;
-    text-transform: uppercase;
-    color: purple;
+
+.addedQuestion .questionText {
+    font-size: 30px;
+}
+.addedQuestion small, .addedQuestion .questionText small {
+  font-size: 10px;
+  text-transform: uppercase;
+  color: purple;
+}
+
+@media screen and (max-width: 991px) {
+  .addedQuestion {
+    font-size: 1rem;
+  }
+  .addedQuestion .questionText {
+    font-size: 1.2rem;
+}
 }

@@ -27,6 +27,7 @@
     transform: translateX(-50%);
     overflow: hidden;
     margin-bottom: 10vh;
+    
 }
 
 .solutionHeader {
@@ -71,3 +72,21 @@
 .solutionButtons > button {
     margin-top: 20px;
 }
+
+
+@media screen and (max-width: 991px) {
+    .solutionContainer {
+      top: 5vh;
+      min-width: 90vw;
+      margin-bottom: 100px;
+    }
+
+    .solutionHeader {
+        padding: 20px;
+        font-size: 2rem;
+    }
+    
+    .solutionContent {
+        padding: 20px;
+    }
+  }

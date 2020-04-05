@@ -7,6 +7,7 @@ import Welcome from './areas/welcome/welcome.component';
 import Results from './areas/results/results.component';
 import Solution from './areas/solution/solution.component';
 import LoadingScreen from './common/loading-screen/loading-screen.component';
+import Credits from './common/credits/credits.component';
 
 function App() {
     const [showLoader, setLoader] = useState(false);
@@ -31,6 +32,7 @@ function App() {
                 </Switch>
             </BrowserRouter>
             <LoadingScreen show={showLoader} />
+            <Credits />
         </React.Fragment>
 
     );

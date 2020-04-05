@@ -1,42 +1,50 @@
 .input {
-    width: 100%;
-    display: block;
-    padding: 10px 20px;
-    font-size: 20px;
-    margin: 10px 0;
-    box-sizing: border-box;
-    resize: none;
+  width: 100%;
+  display: block;
+  padding: 10px 20px;
+  font-size: 20px;
+  margin: 10px 0;
+  box-sizing: border-box;
+  resize: none;
 }
 
 textarea.input {
-    font-size: 30px;
+  font-size: 30px;
 }
 
 .option {
-    display: flex;
+  display: flex;
 }
 
 .markCorrectButton {
-    display: block;
-    width: -moz-fit-content;
-    width: 200px;
-    margin-left: 20px;
-    margin-top: 10px;
-    height: 47px;
-    background: purple;
-    border: none;
-    color: white;
-    font-size: 20px;
-    outline: none;
-    border-radius: 5px;
-    cursor: pointer;
-    transition: all 200ms ease-out;
+  display: block;
+  width: -moz-fit-content;
+  width: 200px;
+  margin-left: 20px;
+  margin-top: 10px;
+  height: 47px;
+  background: purple;
+  border: none;
+  color: white;
+  font-size: 20px;
+  outline: none;
+  border-radius: 5px;
+  cursor: pointer;
+  transition: all 200ms ease-out;
 }
 
 .markCorrectButton.marked {
+  background: transparent;
+  color: green;
+  font-weight: bold;
+}
 
-    background: transparent;
-    color: green;
-    font-weight: bold;
-
+@media screen and (max-width: 991px) {
+    .input {
+        font-size: 1rem;
+      }
+      
+      textarea.input {
+        font-size: 1rem;
+      }
 }

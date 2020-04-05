@@ -161,7 +161,7 @@ class CreateGame extends Component<any, ICreateGameState> {
                 <div className={classes.createGameContainer}>
                     <div className={classes.createGameHeader}>
                         Game ID: {this.state.gameId}
-                        <button onClick={this.onFinish} className="button clear-button large-button" style={{ float: 'right', color: 'white' }}>Finish</button>
+                        <button onClick={this.onFinish} className={[classes.finishButton, 'button clear-button large-button'].join(' ')} >Finish</button>
                     </div>
                     <div className={classes.createGameContent}>
                         <AddQuestionForm question={this.state.questionToAdd} questionChange={this.onChangeQuestion} optionChange={this.onChangeOption} setCorrectOption={this.onSetCorrectOption} />

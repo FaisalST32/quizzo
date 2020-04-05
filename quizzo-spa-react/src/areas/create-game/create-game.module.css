@@ -26,6 +26,7 @@
   box-shadow: 0 0 40px rgba(0, 0, 0, 0.2);
   transform: translateX(-50%);
   overflow: hidden;
+  margin-bottom: 100px;
 }
 
 .createGameHeader {
@@ -39,4 +40,40 @@
 
 .createGameContent {
   padding: 20px 40px;
+}
+
+.createGameHeader .finishButton {
+  float: right;
+  color: white;
+}
+
+@media screen and (max-width: 991px) {
+  .createGameContainer {
+    border-radius: 0px;
+    top: 0vh;
+    position: relative;
+    min-width: 100vw;
+    box-sizing: border-box;
+    box-shadow: none;
+    overflow: hidden;
+    margin-bottom: 100px;
+  }
+  .createGameContent {
+    padding: 10px 20px;
+    margin: 0 5px;
+  }
+
+  .createGameHeader {
+    padding: 20px 40px;
+    font-size: 2rem;
+    box-sizing: border-box;
+    background: purple;
+    color: white;
+    width: 100%;
+  }
+
+  .createGameHeader .finishButton {
+    display: block;
+    float: none;
+  }
 }

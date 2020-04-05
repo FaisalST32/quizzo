@@ -1,0 +1,21 @@
+.credits {
+  position: fixed;
+  bottom: 0;
+  left: 0;
+  font-size: 1.2rem;
+  color: black;
+  padding: 20px 40px 20px 20px;
+  background-color: white;
+}
+.credits > span {
+  color: purple;
+  font-weight: bold;
+}
+
+@media screen and (max-width: 991px) {
+  .credits {
+    width: 100vw;
+    border: solid 1px purple;
+    padding: 10px 40px;
+  }
+}
