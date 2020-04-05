@@ -74,12 +74,12 @@ namespace Quizzo.Api.Controllers
             return NoContent();
         }
 
-        [HttpPost("{username}/PostResponse")]
-        public async Task<IActionResult> PostResponse(string username, ResponseDto responseDto)
+        [HttpPost("{roomCode}/{username}/PostResponse")]
+        public async Task<IActionResult> PostResponse(string roomCode, string username, ResponseDto responseDto)
         {
             var response = _mapper.Map<Response>(responseDto);
 
-            var participantResponse = await _context.Participants.Include(c => c.Responses).SingleAsync(p => p.Name.ToLower() == username.ToLower());
+            var participantResponse = await _context.Participants.Include(c => c.Responses).SingleAsync(p => p.QuizRoom.RoomCode.ToLower() == roomCode.ToLower() && p.Name.ToLower() == username.ToLower());
 
             if (!participantResponse.Responses.Any(r => r.QuestionId == response.QuestionId))
             {

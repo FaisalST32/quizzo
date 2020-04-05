@@ -160,7 +160,7 @@ class Game extends Component<any, GameState> {
             timeTaken: 20 - this.state.currentTimer,
         };
         await axios.post(
-            `${config.apiUrl}responses/${this.state.username}/postResponse`,
+            `${config.apiUrl}responses/${this.state.gameData?.roomCode}/${this.state.username}/postResponse`,
             body
         );
         return;
