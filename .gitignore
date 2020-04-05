@@ -2,3 +2,6 @@
 .vs/slnx.sqlite-journal
 .vs/VSWorkspaceState.json
 .vs/Quizzo/v16/.suo
+
+# Local Netlify folder
+.netlify

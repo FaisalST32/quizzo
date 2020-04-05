@@ -241,7 +241,7 @@ namespace Quizzo.Api.Controllers
         [HttpGet("{roomCode}/{username}/GetSolution")]
         public async Task<IActionResult> GetSolution(string roomCode, string username)
         {
-            var quizRoom = await _context.QuizRooms.Select(q => new { q.RoomCode, q.StartedAtUtc, q.StoppedAtUtc }).SingleAsync(q => q.RoomCode == roomCode);
+            var quizRoom = await _context.QuizRooms.Select(q => new { q.RoomCode, q.StartedAtUtc, q.StoppedAtUtc, q.Id }).SingleAsync(q => q.RoomCode == roomCode);
 
             if (!quizRoom.StartedAtUtc.HasValue || !quizRoom.StoppedAtUtc.HasValue)
             {
@@ -249,7 +249,7 @@ namespace Quizzo.Api.Controllers
             }
 
             var solutions = new List<SolutionDto>();
-            var participant = await _context.Participants.Include(p => p.Responses).SingleAsync(p => p.Name.ToLower() == username.ToLower());
+            var participant = await _context.Participants.Include(p => p.Responses).SingleAsync(p => p.Name.ToLower() == username.ToLower() && p.QuizRoom.Id == quizRoom.Id);
             var questions = await _context.Questions.Include(q => q.Answers).OrderBy(q => q.CreatedOnUtc).Where(q => q.QuizRoom.RoomCode == roomCode).ToListAsync();
 
             foreach (var item in questions)
