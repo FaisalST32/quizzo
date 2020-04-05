@@ -6,12 +6,16 @@ import axios from 'axios';
 // import victoryGif2 from '../../assets/gifs/lfc_victory.gif';
 
 import { IParticipant } from '../../interfaces/IParticipant';
+import { Link } from 'react-router-dom';
+import ResultsWaiting from './results-waiting/results-waiting.component';
 
 interface IResultsState {
     leaderboard: IParticipant[];
     showLeaderboard: boolean;
     username: string;
     gameId: string;
+
+    gameHasFinished: boolean;
 }
 
 class Results extends Component<any, IResultsState> {
@@ -25,19 +29,64 @@ class Results extends Component<any, IResultsState> {
             showLeaderboard: false,
             username: '',
             gameId: '',
+            gameHasFinished: false
         };
     }
 
     componentDidMount = async () => {
         const username = this.props.match.params.username;
         const gameId = this.props.match.params.id;
-        const leaderboard = await this.getLeaderboard(gameId);
         this.setState({
             username: username,
-            gameId: gameId,
-            leaderboard: leaderboard,
+            gameId: gameId
         });
+        this.checkIfGameFinished(gameId);
     };
+
+    checkIfGameFinished = async (roomCode: string) => {
+        const gameIsActive = await this.checkGameActive(roomCode);
+        if (!gameIsActive) {
+            this.setState({
+                gameHasFinished: true,
+            });
+            await this.setLeaderboard(roomCode);
+            return;
+        }
+
+        const interval = setInterval(async () => {
+            if (this.state.gameHasFinished) {
+                clearInterval(interval);
+                await this.setLeaderboard(roomCode);
+            }
+
+            const gameIsActive = await this.checkGameActive(roomCode);
+            if (!gameIsActive) {
+                clearInterval(interval);
+                this.setState({
+                    gameHasFinished: true,
+                }, () => {
+                    this.setLeaderboard(roomCode);
+                });
+            }
+        }, 5000);
+
+    }
+
+    checkGameActive = async (roomCode: string) => {
+        const resp = await axios.get(
+            `${config.apiUrl}QuizRooms/${roomCode}/IsQuizActive`
+        );
+        console.log(resp);
+        return resp && resp.data === true;
+    }
+
+    setLeaderboard = async (roomCode: string) => {
+        const leaderboard = await this.getLeaderboard(roomCode);
+        this.setState({
+            leaderboard: leaderboard
+        })
+
+    }
 
     getLeaderboard = async (gameId: string): Promise<IParticipant[]> => {
         const resp = await axios.get<IParticipant[]>(
@@ -66,11 +115,12 @@ class Results extends Component<any, IResultsState> {
         );
     };
 
+
     // getVictoryGif: string =
 
     render() {
-        const items = this.state.leaderboard.map((item, key) => (
-            <tr key={item.name}>
+        const leaderBoard = this.state.leaderboard.map((item, key) => (
+            <tr key={item.name} data-rank={item.rank}>
                 <td>{item.rank}</td>
                 <td>{item.name}</td>
                 <td>{item.score} pts</td>
@@ -86,67 +136,91 @@ class Results extends Component<any, IResultsState> {
         )?.score as number;
 
         let resultsActions = (
-            <div className={classes.resultsButtons}>
-                <button
-                    onClick={this.onShowLeaderboard}
-                    className="button large-button success-button"
-                >
-                    Top Ten
-                </button>
-                <button
-                    onClick={this.onShowSolution}
-                    className="button large-button danger-button"
-                >
-                    Show Solution
-                </button>
+            <div className={classes.resultsActionArea}>
+                <div className={classes.resultsActionButtons}>
+                    <button
+                        onClick={this.onShowLeaderboard}
+                        className="button large-button success-button"
+                    >
+                        Top Ten
+                    </button>
+                    <button
+                        onClick={this.onShowSolution}
+                        className="button large-button danger-button"
+                    >
+                        Show Solution
+                    </button>
+                </div>
             </div>
         );
 
         if (this.state.showLeaderboard) {
             resultsActions = (
-                <div className={classes.resultsButtons}>
-                    <table className={classes.resultsList}>
-                        <thead>{items}</thead>
+                <div className={classes.resultsActionArea}>
+                    <table className={classes.resultsListTable}>
+                        <thead>
+                            <tr>
+                                <th>Rank</th>
+                                <th>Participant Name</th>
+                                <th>Points</th>
+                            </tr>
+                        </thead>
+                        <tbody>{leaderBoard}</tbody>
                     </table>
-                    <button
-                        className="button clear-button"
-                        onClick={this.onShowResults}
-                        style={{ marginTop: '20px' }}
-                    >
-                        Back
-                    </button>
+                    <div style={{ marginTop: '20px', textAlign: 'center' }}>
+                        <button
+                            className="button primary-button"
+                            onClick={this.onShowResults}
+                            style={{ margin: '20px 10px', textAlign: 'center' }}
+                        >
+                            Back
+                        </button>
+                        <Link to="/">
+                            <button
+                                className="button success-button"
+                                style={{ margin: '20px 10px', textAlign: 'center' }}
+                            >
+                                Go Home
+                            </button>
+                        </Link>
+                    </div>
                 </div>
             );
         }
 
         return (
+
             <div className={classes.results}>
                 <div className={classes.resultsContainer}>
-                    <div className={classes.resultsHeader}>
-                        And the winner is
-                        <span>
-                            {winners.map((winner, i) => {
-                                return (
-                                    <div key={i}>
-                                        <span>{winner.name}</span>
-                                        <span>({winner.score} pts)</span>
-                                    </div>
-                                );
-                            })}
-                        </span>
-                        <img
-                            className={classes.resultsGif}
-                            alt="victory"
-                            src={victoryGif}
-                        ></img>
-                    </div>
-                    <div>Your score: {participantScore}</div>
-                    <div className={classes.resultsActions}>
-                        {resultsActions}
-                    </div>
+                    {this.state.gameHasFinished ?
+                        <React.Fragment>
+                            <div className={classes.resultsHeader}>
+                                {winners.length > 1 ? 'And the winners are' : 'And the winner is'}
+                                <span>
+                                    {winners.map((winner, i) => {
+                                        return (
+                                            <div key={i}>
+                                                <span>{winner.name}</span> <span>({winner.score} pts)</span>
+                                            </div>
+                                        );
+                                    })}
+                                </span><br />
+                                <img
+                                    className={classes.resultsGif}
+                                    alt="victory"
+                                    src={victoryGif}
+                                ></img>
+                            </div>
+                            <div className={classes.yourScore}>Your score: {participantScore}</div>
+                            <div className={classes.resultsActions}>
+                                {resultsActions}
+                            </div>
+                        </React.Fragment>
+                        : <ResultsWaiting />}
                 </div>
             </div>
-        );
+
+        )
     }
 }
 

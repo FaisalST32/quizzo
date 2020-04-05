@@ -40,14 +40,9 @@ class Game extends Component<any, GameState> {
 
         console.log(gameData);
         // TODO: add logic to select current question based on time elapsed
-        if (gameData.stoppedAtUtc || !gameData.questions.length) {
-            this.setState({
-                gameOver: true,
-            });
-            return;
-        }
+
         const gameStarted = !!gameData.startedAtUtc;
-        console.log(gameData.startedAtUtc);
+        const gameOver = !!gameData.stoppedAtUtc || !gameData.questions.length
 
         this.setState({
             gameData: gameData,
@@ -56,6 +51,7 @@ class Game extends Component<any, GameState> {
             currentTimer: 20,
             username: userName,
             gameStarted: gameStarted,
+            gameOver: gameOver
         });
 
         this.checkIfGameStarted(gameId);
@@ -157,7 +153,7 @@ class Game extends Component<any, GameState> {
         const body = {
             questionId,
             answerId: optionId,
-            timeTaken: 20 - this.state.currentTimer,
+            responseTime: 20 - this.state.currentTimer,
         };
         await axios.post(
             `${config.apiUrl}responses/${this.state.gameData?.roomCode}/${this.state.username}/postResponse`,

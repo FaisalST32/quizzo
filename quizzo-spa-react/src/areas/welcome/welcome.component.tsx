@@ -184,9 +184,12 @@ class Welcome extends Component<any, IWelcomeState> {
                     <div className={classes.welcomeHeader}>
                         Welcome to <span>Quizzo</span>
                     </div>
-                    <div className={classes.error}>
-                        {this.state.errorMessage}
-                    </div>
+                    {(this.state.errorMessage && this.state.showJoinBox ?
+                        <div className={classes.error}>
+                            {this.state.errorMessage}
+                        </div>
+                        : '')}
+
                     <div className={classes.welcomeActions}>
                         {welcomeActions}
                     </div>

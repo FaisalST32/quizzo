@@ -206,7 +206,10 @@ namespace Quizzo.Api.Controllers
                     {
                         participant.Score += points;
 
-                        if (response.ResponseTime == _context.Responses.Where(q => q.QuestionId == response.QuestionId).Min(q => q.ResponseTime))
+                        var isFastestCorrectReponse = response.ResponseTime == _context.Responses
+                            .Where(q => q.QuestionId == response.QuestionId && q.Answer.Id == q.Question.Answers.First(a => a.IsCorrect).Id).Min(q => q.ResponseTime);
+
+                        if (isFastestCorrectReponse)
                         {
                             participant.Score += points;
                         }
