@@ -1,17 +1,23 @@
 import React, { Component } from 'react';
 import classes from './results.module.css';
 import victoryGif from '../../assets/gifs/lfc_victory.gif';
+// import victoryGif2 from '../../assets/gifs/lfc_victory.gif';
+
 
 import { IParticipant } from '../../interfaces/IParticipant';
 
 interface IResultsState {
     leaderboard: IParticipant[];
     showLeaderboard: boolean;
-    userName: string;
-    inviteCode: string;
+    username: string;
+    gameId: string;
 }
 
 class Results extends Component<any, IResultsState> {
+
+    // victoryGifs: string[] = [
+
+    // ]
     constructor(props: any) {
         super(props);
         this.state = {
@@ -22,9 +28,19 @@ class Results extends Component<any, IResultsState> {
                 { Id: '4', Name: 'Koala', Score: 70 },
             ],
             showLeaderboard: false,
-            userName: '',
-            inviteCode: '',
+            username: '',
+            gameId: '',
         };
+    }
+
+    componentDidMount = () => {
+        const username = this.props.match.params.username;
+        const gameId = this.props.match.params.id;
+        //TODO: Api call
+        this.setState({
+            username: username,
+            gameId: gameId
+        });
     }
 
     onShowResults = () => {
@@ -41,17 +57,26 @@ class Results extends Component<any, IResultsState> {
 
     onShowSolution = () => {
         this.props.history.push(
-            `/solution/${this.state.inviteCode}/${this.state.userName}`
+            `/solution/${this.state.gameId}/${this.state.username}`
         );
     };
 
+    // getVictoryGif: string = 
+
     render() {
         const items = this.state.leaderboard.map((item, key) => (
-            <tr>
+            <tr key={item.Name}>
                 <td>{item.Name}</td>
                 <td>{item.Score}</td>
             </tr>
         ));
+
+        const winner: IParticipant = this.state.leaderboard.reduce((prev, curr) => {
+            return prev.Score > curr.Score ? prev : curr;
+        });
+
+        const participantScore: number = this.state.leaderboard.find(p => p.Name.toLowerCase() === this.state.username.toLowerCase())?.Score as number;
+
         let resultsActions = (
             <div className={classes.resultsButtons}>
                 <button
@@ -68,10 +93,15 @@ class Results extends Component<any, IResultsState> {
                 </button>
             </div>
         );
+
         if (this.state.showLeaderboard) {
             resultsActions = (
                 <div className={classes.resultsButtons}>
-                    <table className={classes.resultsList}>{items}</table>
+                    <table className={classes.resultsList}>
+                        <thead>
+                            {items}
+                        </thead>
+                    </table>
                     <button
                         className="button clear-button"
                         onClick={this.onShowResults}
@@ -82,8 +112,7 @@ class Results extends Component<any, IResultsState> {
                 </div>
             );
         }
-        const winner: IParticipant = this.state.leaderboard[0];
-        const participantScore: number = 50;
+
         return (
             <div className={classes.results}>
                 <div className={classes.resultsContainer}>

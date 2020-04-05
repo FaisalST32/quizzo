@@ -5,27 +5,28 @@
             rgb(255, 88, 26, 0.7)
         ),
         url('../../assets/images/game-bg.jpg');
-    background-position: center;
-    background-size: cover;
-    min-height: 100vh;
-    min-width: 100vw;
-    background-attachment: fixed;
+        background-position: center;
+        background-size: cover;
+        background-attachment: fixed;
+        height: 100vh;
+        width: 100vw;
+        overflow-y: scroll;
 }
 
 .resultsContainer {
-    background-color: rgba(255, 255, 255, 0.6);
     background: white;
     border-radius: 20px;
     min-height: 60vh;
-    top: 10vh;
+    top: 5vh;
     left: 50vw;
-    padding: 60px 40px;
     position: relative;
     width: 20vw;
-    min-width: 400px;
+    min-width: 1000px;
     box-sizing: border-box;
     box-shadow: 0 0 40px rgba(0, 0, 0, 0.2);
     transform: translateX(-50%);
+    overflow: hidden;
+    padding: 60px 80px;
 }
 
 .resultsHeader {
@@ -50,8 +51,8 @@
 }
 
 .resultsGif {
-    width: 80%;
-    height: 80%;
+    height: 400px;
+    margin-top: 20px;
 }
 
 .resultsList {
@@ -60,5 +61,5 @@
 }
 
 .resultsActions {
-    margin-top: 25%;
+    margin-top: 20px;
 }
