@@ -51,7 +51,7 @@ namespace Quizzo.Api.Controllers
 
             var quizRoomDto = _mapper.Map<QuizRoomDto>(quizRoom);
 
-            return Ok(new { quizRoom = quizRoomDto, questions});
+            return Ok(new { quizRoom = quizRoomDto, questions });
         }
 
         [HttpPut("{id}")]
@@ -183,6 +183,48 @@ namespace Quizzo.Api.Controllers
             }
 
             return Ok(leaderboard.OrderByDescending(l => l.Score));
+        }
+
+        [HttpGet("{roomCode}/{participantId}/GetSolution")]
+        public async Task<IActionResult> GetSolution(string roomCode, Guid participantId)
+        {
+            var quizRoom = await _context.QuizRooms.Select(q => new { q.RoomCode, q.StartedAtUtc, q.StoppedAtUtc }).SingleAsync(q => q.RoomCode == roomCode);
+            
+            if (!quizRoom.StartedAtUtc.HasValue || !quizRoom.StoppedAtUtc.HasValue)
+            {
+                return BadRequest();
+            }
+
+            var solutions = new List<SolutionDto>();
+            var participant = await _context.Participants.Include(p => p.Responses).SingleAsync(p => p.Id == participantId);
+            var questions = await _context.Questions.Include(q => q.Answers).OrderByDescending(q => q.CreatedOnUtc).Where(q => q.QuizRoom.RoomCode == roomCode).ToListAsync();
+
+            foreach (var item in questions)
+            {
+                var correctAnswer = item.Answers.Single(a => a.IsCorrect);
+                var response = participant.Responses.SingleOrDefault(a => a.QuestionId == item.Id);
+
+                var solution = new SolutionDto()
+                {
+                    QuestionText = item.QuestionText,
+                    CorrectAnswerText = correctAnswer.AnswerText,
+                    SelectedAnswerText = response != null ? item.Answers.Single(a => a.Id == response.AnswerId).AnswerText : string.Empty
+                };
+
+                if (solution.CorrectAnswerText == solution.SelectedAnswerText)
+                {
+                    solution.Score += points;
+
+                    if (response != null && response.ResponseTime == _context.Responses.Where(q => q.QuestionId == response.QuestionId).Min(q => q.ResponseTime))
+                    {
+                        solution.Score += points;
+                    }
+                }
+
+                solutions.Add(solution);
+            }
+
+            return Ok(solutions);
         }
 
         private bool QuizRoomExists(Guid id)
