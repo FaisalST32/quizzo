@@ -5,19 +5,19 @@
             rgb(255, 88, 26, 0.7)
         ),
         url('../../assets/images/game-bg.jpg');
-        background-position: center;
-        background-size: cover;
-        background-attachment: fixed;
-        height: 100vh;
-        width: 100vw;
-        overflow-y: scroll;
+    background-position: center;
+    background-size: cover;
+    background-attachment: fixed;
+    height: 100vh;
+    width: 100vw;
+    overflow-y: scroll;
 }
 
 .resultsContainer {
     background: white;
     border-radius: 20px;
     min-height: 60vh;
-    top: 5vh;
+    top: 10vh;
     left: 50vw;
     position: relative;
     width: 20vw;
@@ -27,6 +27,7 @@
     transform: translateX(-50%);
     overflow: hidden;
     padding: 60px 80px;
+    margin-bottom: 10vh;
 }
 
 .resultsHeader {

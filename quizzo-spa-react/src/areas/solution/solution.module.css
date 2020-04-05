@@ -1,0 +1,73 @@
+.solution {
+    background-image: linear-gradient(
+            to right,
+            rgba(0, 206, 209, 0.548),
+            rgba(0, 156, 158, 0.486)
+        ),
+        url('../../assets/images/game-bg.jpg');
+    background-position: center;
+    background-size: cover;
+    background-attachment: fixed;
+    height: 100vh;
+    width: 100vw;
+    overflow-y: scroll;
+}
+
+.solutionContainer {
+    background: white;
+    border-radius: 20px;
+    min-height: 60vh;
+    top: 10vh;
+    left: 50vw;
+    position: relative;
+    width: 20vw;
+    min-width: 1000px;
+    box-sizing: border-box;
+    box-shadow: 0 0 40px rgba(0, 0, 0, 0.2);
+    transform: translateX(-50%);
+    overflow: hidden;
+    margin-bottom: 10vh;
+}
+
+.solutionHeader {
+    padding: 20px 40px;
+    font-size: 3rem;
+    box-sizing: border-box;
+    background: #9e004d;
+    color: white;
+    width: 100%;
+}
+
+.solutionContent {
+    padding: 20px 40px;
+}
+
+.solutionQuestion {
+    color: purple;
+    font-weight: 700;
+}
+
+.solutionCorrect {
+    color: green;
+    font-weight: 700;
+}
+
+.solutionWrong {
+    color: red;
+    font-weight: 700;
+}
+
+.solutionTotalScore {
+    color: #9e004d;
+    font-size: 2rem;
+    padding: 20px 40px;
+}
+
+.solutionButtons {
+    display: flex;
+    flex-flow: column nowrap;
+    justify-content: space-between;
+}
+.solutionButtons > button {
+    margin-top: 20px;
+}

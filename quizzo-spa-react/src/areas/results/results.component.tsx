@@ -3,7 +3,6 @@ import classes from './results.module.css';
 import victoryGif from '../../assets/gifs/lfc_victory.gif';
 // import victoryGif2 from '../../assets/gifs/lfc_victory.gif';
 
-
 import { IParticipant } from '../../interfaces/IParticipant';
 
 interface IResultsState {
@@ -14,7 +13,6 @@ interface IResultsState {
 }
 
 class Results extends Component<any, IResultsState> {
-
     // victoryGifs: string[] = [
 
     // ]
@@ -39,9 +37,9 @@ class Results extends Component<any, IResultsState> {
         //TODO: Api call
         this.setState({
             username: username,
-            gameId: gameId
+            gameId: gameId,
         });
-    }
+    };
 
     onShowResults = () => {
         this.setState({
@@ -61,7 +59,7 @@ class Results extends Component<any, IResultsState> {
         );
     };
 
-    // getVictoryGif: string = 
+    // getVictoryGif: string =
 
     render() {
         const items = this.state.leaderboard.map((item, key) => (
@@ -71,11 +69,15 @@ class Results extends Component<any, IResultsState> {
             </tr>
         ));
 
-        const winner: IParticipant = this.state.leaderboard.reduce((prev, curr) => {
-            return prev.Score > curr.Score ? prev : curr;
-        });
+        const winner: IParticipant = this.state.leaderboard.reduce(
+            (prev, curr) => {
+                return prev.Score > curr.Score ? prev : curr;
+            }
+        );
 
-        const participantScore: number = this.state.leaderboard.find(p => p.Name.toLowerCase() === this.state.username.toLowerCase())?.Score as number;
+        const participantScore: number = this.state.leaderboard.find(
+            (p) => p.Name.toLowerCase() === this.state.username.toLowerCase()
+        )?.Score as number;
 
         let resultsActions = (
             <div className={classes.resultsButtons}>
@@ -98,9 +100,7 @@ class Results extends Component<any, IResultsState> {
             resultsActions = (
                 <div className={classes.resultsButtons}>
                     <table className={classes.resultsList}>
-                        <thead>
-                            {items}
-                        </thead>
+                        <thead>{items}</thead>
                     </table>
                     <button
                         className="button clear-button"
