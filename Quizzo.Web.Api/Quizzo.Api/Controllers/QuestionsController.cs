@@ -25,6 +25,12 @@ namespace Quizzo.Api.Controllers
         [HttpGet("GetQuestionsByQuizRoom/{roomCode}")]
         public async Task<IActionResult> GetQuestionsByQuizRoom(string roomCode)
         {
+            var quizRoom = await _context.QuizRooms.SingleAsync(q => q.RoomCode.ToLower() == roomCode.ToLower());
+            if (quizRoom.StartedAtUtc.HasValue)
+            {
+                return BadRequest();
+            }
+
             var questions = await _context.Questions.Include(q => q.Answers).OrderBy(q => q.CreatedOnUtc).Where(q => q.QuizRoom.RoomCode == roomCode)
                 .Select(q => new QuestionDto()
                 {
@@ -33,7 +39,8 @@ namespace Quizzo.Api.Controllers
                     Answers = q.Answers.Select(a => new AnswerDto()
                     {
                         Id = a.Id,
-                        AnswerText = a.AnswerText
+                        AnswerText = a.AnswerText,
+                        IsCorrect = a.IsCorrect
                     }).ToList()
                 }).ToListAsync();
 

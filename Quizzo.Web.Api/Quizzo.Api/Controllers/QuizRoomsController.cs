@@ -193,6 +193,8 @@ namespace Quizzo.Api.Controllers
 
             var participants = await _context.Participants.Include(p => p.Responses).ThenInclude(r => r.Question).ThenInclude(q => q.Answers).Where(p => p.QuizRoom.RoomCode == roomCode).ToListAsync();
 
+            var responses = participants.SelectMany(c => c.Responses).ToList();
+
             foreach (var item in participants)
             {
                 var participant = new ParticipantDto()
@@ -206,8 +208,17 @@ namespace Quizzo.Api.Controllers
                     {
                         participant.Score += points;
 
-                        var isFastestCorrectReponse = response.ResponseTime == _context.Responses
-                            .Where(q => q.QuestionId == response.QuestionId && q.Answer.Id == q.Question.Answers.First(a => a.IsCorrect).Id).Min(q => q.ResponseTime);
+                        long fastestResponseTime = 0;
+
+                        var correctResponses = responses
+                            .Where(q => q.QuestionId == response.QuestionId && q.AnswerId == q.Question.Answers.First(a => a.IsCorrect).Id).ToList();
+
+                        if (correctResponses != null)
+                        {
+                            fastestResponseTime = responses.Min(r => r.ResponseTime);
+                        }
+
+                        var isFastestCorrectReponse = response.ResponseTime == fastestResponseTime;
 
                         if (isFastestCorrectReponse)
                         {
