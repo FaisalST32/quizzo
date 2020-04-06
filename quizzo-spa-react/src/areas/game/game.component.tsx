@@ -24,7 +24,7 @@ class Game extends Component<any, GameState> {
         this.state = {
             gameData: undefined,
             currentQuestion: undefined,
-            currentTimer: 20,
+            currentTimer: config.questionTime,
             currentOptionSelected: '',
             gameOver: false,
             username: '',
@@ -48,7 +48,7 @@ class Game extends Component<any, GameState> {
             gameData: gameData,
             currentQuestion: gameData.questions[0],
             currentOptionSelected: '',
-            currentTimer: 20,
+            currentTimer: config.questionTime,
             username: userName,
             gameStarted: gameStarted,
             gameOver: gameOver
@@ -130,7 +130,7 @@ class Game extends Component<any, GameState> {
             return {
                 currentQuestion:
                     currState.gameData?.questions[currentQuestionIndex + 1],
-                currentTimer: 20,
+                currentTimer: config.questionTime,
                 currentOptionSelected: '',
             };
         });
@@ -153,7 +153,7 @@ class Game extends Component<any, GameState> {
         const body = {
             questionId,
             answerId: optionId,
-            responseTime: 20 - this.state.currentTimer,
+            responseTime: config.questionTime - this.state.currentTimer,
         };
         await axios.post(
             `${config.apiUrl}responses/${this.state.gameData?.roomCode}/${this.state.username}/postResponse`,

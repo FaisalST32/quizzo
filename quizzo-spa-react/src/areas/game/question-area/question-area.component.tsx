@@ -1,6 +1,7 @@
 import React, { FunctionComponent, Fragment } from 'react'
 import { IQuestion } from '../../../interfaces/IQuestion';
 import classes from './question-area.module.css';
+import { config } from '../../../environments/environment.dev';
 type QuestionAreaProps = {
     timer: number,
     question?: IQuestion,
@@ -27,7 +28,7 @@ const QuestionArea: FunctionComponent<QuestionAreaProps> = props => {
     })
     return (
         <Fragment>
-            <div className={classes.timer} style={{width: ((props.timer / 20) * 100).toString() + '%'}}></div>
+            <div className={classes.timer} style={{width: ((props.timer / config.questionTime) * 100).toString() + '%'}}></div>
             <div className={classes.questionArea}>
                 <div className={classes.questionText}>
                     <small>Q. </small>{props.question?.questionText}
