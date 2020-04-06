@@ -235,7 +235,7 @@ namespace Quizzo.Api.Controllers
                 currentScore = item.Score;
             }
 
-            return Ok(leaderboard.OrderByDescending(l => l.Score));
+            return Ok(leaderboard.Where(l => l.Rank <= 10));
         }
 
         [HttpGet("{roomCode}/{username}/GetSolution")]

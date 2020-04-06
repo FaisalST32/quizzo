@@ -65,6 +65,7 @@ namespace Quizzo.Api
             // specifying the Swagger JSON endpoint.
             app.UseSwaggerUI(c =>
             {
+                c.RoutePrefix = "anfield";
                 c.SwaggerEndpoint("/swagger/v1/swagger.json", "Quizzo API V1");
             });
         }
