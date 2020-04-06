@@ -197,6 +197,8 @@ namespace Quizzo.Api.Controllers
 
             foreach (var item in participants)
             {
+                var questions = new List<Guid>();
+
                 var participant = new ParticipantDto()
                 {
                     Name = item.Name
@@ -204,25 +206,30 @@ namespace Quizzo.Api.Controllers
 
                 foreach (var response in item.Responses)
                 {
-                    if (response.Question.Answers.Any(a => a.IsCorrect && a.Id == response.AnswerId))
+                    if (!questions.Any(q => q == response.QuestionId))
                     {
-                        participant.Score += points;
-
-                        long fastestResponseTime = 0;
-
-                        var correctResponses = responses
-                            .Where(q => q.QuestionId == response.QuestionId && q.AnswerId == q.Question.Answers.First(a => a.IsCorrect).Id).ToList();
-
-                        if (correctResponses != null)
-                        {
-                            fastestResponseTime = responses.Min(r => r.ResponseTime);
-                        }
-
-                        var isFastestCorrectReponse = response.ResponseTime == fastestResponseTime;
-
-                        if (isFastestCorrectReponse)
+                        if (response.Question.Answers.Any(a => a.IsCorrect && a.Id == response.AnswerId))
                         {
                             participant.Score += points;
+
+                            long fastestResponseTime = 0;
+
+                            var correctResponses = responses
+                                .Where(q => q.QuestionId == response.QuestionId && q.AnswerId == q.Question.Answers.First(a => a.IsCorrect).Id).ToList();
+
+                            if (correctResponses != null)
+                            {
+                                fastestResponseTime = responses.Min(r => r.ResponseTime);
+                            }
+
+                            var isFastestCorrectReponse = response.ResponseTime == fastestResponseTime;
+
+                            if (isFastestCorrectReponse)
+                            {
+                                participant.Score += points;
+                            }
+
+                            questions.Add(response.QuestionId);
                         }
                     }
                 }
@@ -266,7 +273,7 @@ namespace Quizzo.Api.Controllers
             foreach (var item in questions)
             {
                 var correctAnswer = item.Answers.Single(a => a.IsCorrect);
-                var response = participant.Responses.SingleOrDefault(a => a.QuestionId == item.Id);
+                var response = participant.Responses.Where(a => a.QuestionId == item.Id).OrderBy(a => a.CreatedOnUtc).FirstOrDefault(a => a.QuestionId == item.Id);
 
                 var solution = new SolutionDto()
                 {
