@@ -7,7 +7,7 @@ import axios from 'axios';
 interface ISolutionState {
     solutions?: ISolution[];
     username: string;
-    gameId: string;
+    roomCode: string;
 }
 
 class Solution extends Component<any, ISolutionState> {
@@ -16,33 +16,33 @@ class Solution extends Component<any, ISolutionState> {
         this.state = {
             solutions: undefined,
             username: '',
-            gameId: '',
+            roomCode: '',
         };
     }
     componentDidMount = async () => {
-        const gameId = this.props.match.params.id;
+        const roomCode = this.props.match.params.id;
         const username = this.props.match.params.username;
-        const solutions = await this.getSolutions(gameId, username);
+        const solutions = await this.getSolutions(roomCode, username);
         this.setState({
             solutions: solutions,
             username: username,
-            gameId: gameId,
+            roomCode: roomCode,
         });
     };
 
     onShowResults = () => {
         this.props.history.push(
-            `/results/${this.state.gameId}/${this.state.username}`
+            `/results/${this.state.roomCode}/${this.state.username}`
         );
     };
 
     getSolutions = async (
-        gameId: string,
+        roomCode: string,
         username: string
     ): Promise<ISolution[]> => {
         try {
             const resp = await axios.get<ISolution[]>(
-                `${config.apiUrl}QuizRooms/${gameId}/${username}/GetSolution`
+                `${config.apiUrl}QuizRooms/${roomCode}/${username}/GetSolution`
             );
             console.log(resp);
             const solutions = resp.data;

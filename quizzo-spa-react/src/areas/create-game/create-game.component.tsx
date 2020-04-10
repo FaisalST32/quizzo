@@ -8,7 +8,7 @@ import { config } from '../../environments/environment.dev';
 import axios from 'axios';
 
 interface ICreateGameState {
-    gameId: string;
+    roomCode: string;
     questions: IQuestion[];
     questionToAdd: IQuestion
 }
@@ -38,7 +38,7 @@ class CreateGame extends Component<any, ICreateGameState> {
     constructor(props: any) {
         super(props);
         this.state = {
-            gameId: '00000',
+            roomCode: '00000',
             questions: [],
             questionToAdd: this.emptyQuestion
         }
@@ -48,13 +48,13 @@ class CreateGame extends Component<any, ICreateGameState> {
         const roomCode = this.props.match.params.roomCode;
         const questions = await this.getGameQuestions(roomCode);
         this.setState({
-            gameId: roomCode,
+            roomCode: roomCode,
             questions: questions
         })
     }
 
-    getGameQuestions = async (gameId: string): Promise<IQuestion[]> => {
-        const resp = await axios.get<IQuestion[]>(`${config.apiUrl}Questions/GetQuestionsByQuizRoom/${gameId}`);
+    getGameQuestions = async (roomCode: string): Promise<IQuestion[]> => {
+        const resp = await axios.get<IQuestion[]>(`${config.apiUrl}Questions/GetQuestionsByQuizRoom/${roomCode}`);
         console.log(resp);
         const questions = resp.data;
         return questions;
@@ -105,7 +105,7 @@ class CreateGame extends Component<any, ICreateGameState> {
                 return;
 
             this.props.showLoader();
-            const questionId: string = await this.addQuestion(newQuestion, this.state.gameId);
+            const questionId: string = await this.addQuestion(newQuestion, this.state.roomCode);
             newQuestion.id = questionId;
 
             const questions = [...this.state.questions];
@@ -121,8 +121,8 @@ class CreateGame extends Component<any, ICreateGameState> {
         }
     }
 
-    addQuestion = async (question: IQuestion, gameId: string): Promise<string> => {
-        const resp = await axios.post<IQuestion>(`${config.apiUrl}questions/${gameId}/PostQuestion`, question);
+    addQuestion = async (question: IQuestion, roomCode: string): Promise<string> => {
+        const resp = await axios.post<IQuestion>(`${config.apiUrl}questions/${roomCode}/PostQuestion`, question);
         console.log(resp);
         return resp.data.id as string;
     }
@@ -160,7 +160,7 @@ class CreateGame extends Component<any, ICreateGameState> {
             <div className={classes.createGame}>
                 <div className={classes.createGameContainer}>
                     <div className={classes.createGameHeader}>
-                        Game ID: {this.state.gameId}
+                        Game ID: {this.state.roomCode}
                         <button onClick={this.onFinish} className={[classes.finishButton, 'button clear-button large-button'].join(' ')} >Finish</button>
                     </div>
                     <div className={classes.createGameContent}>

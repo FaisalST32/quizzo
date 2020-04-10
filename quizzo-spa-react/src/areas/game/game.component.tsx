@@ -32,11 +32,11 @@ class Game extends Component<any, GameState> {
         };
     }
     componentDidMount = async () => {
-        const gameId = this.props.match.params.id;
+        const roomCode = this.props.match.params.id;
         const userName = this.props.match.params.username;
-        console.log(gameId);
+        console.log(roomCode);
         console.log(userName);
-        const gameData = await this.getGameData(gameId, userName);
+        const gameData = await this.getGameData(roomCode, userName);
 
         console.log(gameData);
         // TODO: add logic to select current question based on time elapsed
@@ -54,15 +54,15 @@ class Game extends Component<any, GameState> {
             gameOver: gameOver
         });
 
-        this.checkIfGameStarted(gameId);
+        this.checkIfGameStarted(roomCode);
         // this.beginTimer();
     };
 
-    getGameData = async (gameId: string, userName: string): Promise<IQuiz> => {
+    getGameData = async (roomCode: string, userName: string): Promise<IQuiz> => {
         const resp = await axios.get<{
             quizRoom: IQuiz;
             questions: IQuestion[];
-        }>(`${config.apiUrl}quizrooms/${gameId}/${userName}`);
+        }>(`${config.apiUrl}quizrooms/${roomCode}/${userName}`);
         console.log(resp);
 
         const quizFound: IQuiz = resp.data.quizRoom;
@@ -70,7 +70,7 @@ class Game extends Component<any, GameState> {
         return quizFound;
     };
 
-    checkIfGameStarted = async (gameId: string) => {
+    checkIfGameStarted = async (roomCode: string) => {
         if (this.state.gameStarted) {
             this.beginTimer();
             return;
@@ -82,7 +82,7 @@ class Game extends Component<any, GameState> {
             }
 
             const resp = await axios.get(
-                `${config.apiUrl}QuizRooms/${gameId}/IsQuizActive`
+                `${config.apiUrl}QuizRooms/${roomCode}/IsQuizActive`
             );
             console.log(resp);
             if (resp && resp.data) {

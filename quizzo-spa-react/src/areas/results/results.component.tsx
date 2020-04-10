@@ -13,7 +13,7 @@ interface IResultsState {
     leaderboard: IParticipant[];
     showLeaderboard: boolean;
     username: string;
-    gameId: string;
+    roomCode: string;
 
     gameHasFinished: boolean;
 }
@@ -28,19 +28,19 @@ class Results extends Component<any, IResultsState> {
             leaderboard: [],
             showLeaderboard: false,
             username: '',
-            gameId: '',
+            roomCode: '',
             gameHasFinished: false
         };
     }
 
     componentDidMount = async () => {
         const username = this.props.match.params.username;
-        const gameId = this.props.match.params.id;
+        const roomCode = this.props.match.params.id;
         this.setState({
             username: username,
-            gameId: gameId
+            roomCode: roomCode
         });
-        this.checkIfGameFinished(gameId);
+        this.checkIfGameFinished(roomCode);
     };
 
     checkIfGameFinished = async (roomCode: string) => {
@@ -88,9 +88,9 @@ class Results extends Component<any, IResultsState> {
 
     }
 
-    getLeaderboard = async (gameId: string): Promise<IParticipant[]> => {
+    getLeaderboard = async (roomCode: string): Promise<IParticipant[]> => {
         const resp = await axios.get<IParticipant[]>(
-            `${config.apiUrl}QuizRooms/${gameId}/GetLeaderboard`
+            `${config.apiUrl}QuizRooms/${roomCode}/GetLeaderboard`
         );
         console.log(resp);
         const leaderboard = resp.data;
@@ -111,7 +111,7 @@ class Results extends Component<any, IResultsState> {
 
     onShowSolution = () => {
         this.props.history.push(
-            `/solution/${this.state.gameId}/${this.state.username}`
+            `/solution/${this.state.roomCode}/${this.state.username}`
         );
     };
 
