@@ -10,6 +10,7 @@ type QuestionAreaProps = {
     questionNumber: number
 }
 
+
 const QuestionArea: FunctionComponent<QuestionAreaProps> = props => {
     const optionLabels = ['A', 'B', 'C', 'D'];
     const options = props.question?.answers.map((answer, i) => {

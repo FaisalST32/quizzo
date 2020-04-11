@@ -28,9 +28,10 @@ class Game extends Component<any, GameState> {
             currentOptionSelected: '',
             gameOver: false,
             username: '',
-            gameStarted: false,
+            gameStarted: false
         };
     }
+
     componentDidMount = async () => {
         const roomCode = this.props.match.params.id;
         const userName = this.props.match.params.username;
@@ -38,15 +39,14 @@ class Game extends Component<any, GameState> {
         console.log(userName);
         const gameData = await this.getGameData(roomCode, userName);
 
-        console.log(gameData);
         // TODO: add logic to select current question based on time elapsed
 
         const gameStarted = !!gameData.startedAtUtc;
-        const gameOver = !!gameData.stoppedAtUtc || !gameData.questions.length
-
+        const gameOver = !!gameData.stoppedAtUtc || !gameData.questions?.length
+        const questions = gameData.questions as IQuestion[];
         this.setState({
             gameData: gameData,
-            currentQuestion: gameData.questions[0],
+            currentQuestion: questions[0],
             currentOptionSelected: '',
             currentTimer: config.questionTime,
             username: userName,
@@ -114,12 +114,12 @@ class Game extends Component<any, GameState> {
         if (!this.state.currentOptionSelected) {
             this.saveResponse(this.state.currentQuestion?.id as string);
         }
-        const currentQuestionIndex: number = this.state.gameData?.questions.findIndex(
+        const currentQuestionIndex: number = this.state.gameData?.questions?.findIndex(
             (q) => q.id === this.state.currentQuestion?.id
         ) as number;
         if (
             currentQuestionIndex ===
-            (this.state.gameData?.questions.length as number) - 1
+            (this.state.gameData?.questions?.length as number) - 1
         ) {
             this.setState({
                 gameOver: true,
@@ -127,9 +127,12 @@ class Game extends Component<any, GameState> {
             return;
         }
         this.setState((currState) => {
+            const questions = currState.gameData?.questions || [];
+            if (!questions.length) {
+                return {...currState};
+            }
             return {
-                currentQuestion:
-                    currState.gameData?.questions[currentQuestionIndex + 1],
+                currentQuestion: questions[currentQuestionIndex + 1],
                 currentTimer: config.questionTime,
                 currentOptionSelected: '',
             };
@@ -141,12 +144,10 @@ class Game extends Component<any, GameState> {
         if (this.state.currentOptionSelected) {
             return;
         }
-
-        await this.saveResponse(questionId, optionId);
-
         this.setState({
             currentOptionSelected: optionId,
         });
+        await this.saveResponse(questionId, optionId);
     };
 
     saveResponse = async (questionId: string, optionId?: string) => {
@@ -167,6 +168,7 @@ class Game extends Component<any, GameState> {
             `/results/${this.state.gameData?.roomCode}/${this.state.username}`
         );
     };
+
     render() {
         let gameArea = <WaitingArea />;
 

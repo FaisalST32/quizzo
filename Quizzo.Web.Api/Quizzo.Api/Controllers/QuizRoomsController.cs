@@ -253,7 +253,31 @@ namespace Quizzo.Api.Controllers
                 currentScore = item.Score;
             }
 
-            return Ok(leaderboard.Where(l => l.Rank <= 10));
+        [HttpPost("{roomCode}/ReadyQuiz")]
+        public async Task<IActionResult> ReadyQuiz(string roomCode)
+        {
+            var quizRoom = await _context.QuizRooms.SingleAsync(q => q.RoomCode == roomCode);
+
+            if (!quizRoom.IsReady)
+            {
+                quizRoom.IsReady = true;
+                await _context.SaveChangesAsync();
+            }
+
+            return Ok();
+        }
+
+        [HttpGet("{roomCode}/GetLeaderboard")]
+        public async Task<IActionResult> GetLeaderboard(string roomCode)
+        {
+            var leaderboard = await _context.Participants.Where(p => p.QuizRoom.RoomCode.ToLower() == roomCode.ToLower()).OrderByDescending(p => p.Rank).Select(p => new ParticipantDto()
+            {
+                Name = p.Name,
+                Rank = p.Rank,
+                Score = p.Score
+            }).Where(l => l.Rank <= 10).ToListAsync();
+
+            return Ok(leaderboard);
         }
 
         [HttpGet("{roomCode}/{username}/GetSolution")]

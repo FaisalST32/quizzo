@@ -7,9 +7,11 @@ import { IAnswer } from '../../interfaces/IAnswer';
 import { config } from '../../environments/environment.dev';
 import axios from 'axios';
 import CreateGameInfo from './create-game-info/create-game-info.component';
+import FinishGameInfo from './finish-create-info/finish-game-info.component';
+import { IQuiz } from '../../interfaces/IQuiz';
 
 interface ICreateGameState {
-    roomCode: string;
+    quizData: IQuiz;
     questions: IQuestion[];
     questionToAdd: IQuestion;
     addingQuestions: boolean;
@@ -40,7 +42,13 @@ class CreateGame extends Component<any, ICreateGameState> {
     constructor(props: any) {
         super(props);
         this.state = {
-            roomCode: '',
+            quizData: {
+                adminCode: 0,
+                roomCode: '',
+                isReady: false,
+                startedAtUtc: undefined,
+                stoppedAtUtc: undefined
+            },
             questions: [],
             questionToAdd: this.emptyQuestion,
             addingQuestions: false
@@ -48,23 +56,36 @@ class CreateGame extends Component<any, ICreateGameState> {
     }
 
     componentDidMount = async () => {
-        const roomCode = this.props.match.params.roomCode;
-        const questions = await this.getGameQuestions(roomCode);
-        this.setState({
-            roomCode: roomCode,
-            questions: questions,
-            addingQuestions: questions?.length > 0
-        })
+        this.props.showLoader(true);
+        try {
+            const roomCode = this.props.match.params.roomCode;
+            const adminCode = this.props.match.params.adminCode;
+            const [questions, quizData] = await this.getGameData(roomCode, adminCode);
+
+            if (quizData.stoppedAtUtc) {
+                this.props.history.push(`results/${this.state.quizData.roomCode}/admin`);
+                return;
+            }
+
+            this.setState({
+                quizData: quizData,
+                questions: questions,
+                addingQuestions: questions?.length > 0
+            })
+            this.props.hideLoader();
+        } catch (err) {
+            this.props.hideLoader();
+            this.props.history.replace('/');
+        }
     }
 
-    getGameQuestions = async (roomCode: string): Promise<IQuestion[]> => {
-        const resp = await axios.get<IQuestion[]>(`${config.apiUrl}Questions/GetQuestionsByQuizRoom/${roomCode}`);
+    getGameData = async (roomCode: string, adminCode: number): Promise<[IQuestion[], IQuiz]> => {
+        const resp = await axios.get<{ questions: IQuestion[], quizRoom: IQuiz }>(`${config.apiUrl}quizrooms/GetQuizRoomForAdmin/${roomCode}/${adminCode}`);
         console.log(resp);
-        const questions = resp.data;
-        return questions;
+        const questions = resp.data.questions;
+        const quizData = resp.data.quizRoom;
+        return [questions, quizData];
     }
-
-
 
     onChangeQuestion = (newValue: string) => {
         let questionToAdd = { ...this.state.questionToAdd };
@@ -109,7 +130,7 @@ class CreateGame extends Component<any, ICreateGameState> {
                 return;
 
             this.props.showLoader();
-            const questionId: string = await this.addQuestion(newQuestion, this.state.roomCode);
+            const questionId: string = await this.addQuestion(newQuestion, this.state.quizData.roomCode);
             newQuestion.id = questionId;
 
             const questions = [...this.state.questions];
@@ -145,8 +166,18 @@ class CreateGame extends Component<any, ICreateGameState> {
     }
 
     onFinish = async () => {
-        await this.onAddQuestion();
-        this.props.history.push('/');
+        if (this.state.questions.length === 0)
+            return;
+
+        this.props.showLoader();
+        try {
+            await this.onAddQuestion();
+            await this.readyQuiz();
+            this.props.hideLoader();
+            this.showFinishScreen();
+        } catch (err) {
+            this.props.hideLoader();
+        }
     }
 
     onStartAddingQuestions = () => {
@@ -155,38 +186,104 @@ class CreateGame extends Component<any, ICreateGameState> {
         })
     }
 
+    showFinishScreen = () => {
+        const updatedQuizData = { ...this.state.quizData };
+        this.setState({
+            quizData: {
+                ...updatedQuizData,
+                isReady: true
+            }
+        })
+    }
+
+    onStartGame = async () => {
+        if (this.state.quizData.startedAtUtc)
+            return;
+        await axios.post(`${config.apiUrl}quizrooms/${this.state.quizData.roomCode}/startquiz`);
+        const quizData = { ...this.state.quizData };
+        quizData.startedAtUtc = new Date(new Date().toUTCString())
+        this.setState({
+            quizData: quizData
+        });
+    }
+
+    onStopGame = async () => {
+        if (this.state.quizData.stoppedAtUtc) {
+            return;
+        }
+
+        this.props.showLoader()
+
+        try {
+            await axios.post(`${config.apiUrl}quizrooms/${this.state.quizData.roomCode}/stopquiz`);
+            const quizData = { ...this.state.quizData };
+            quizData.stoppedAtUtc = new Date(new Date().toUTCString());
+            this.setState({
+                quizData: quizData
+            }, () => {
+                this.props.hideLoader();
+                this.props.history.push(`results/${this.state.quizData.roomCode}/admin`);
+            });
+        } catch (err) {
+            this.props.hideLoader();
+        }
+    }
+    readyQuiz = async () => {
+        if (this.state.quizData.isReady)
+            return;
+        await axios.post(`${config.apiUrl}quizrooms/${this.state.quizData.roomCode}/readyquiz`);
+        const quizData = { ...this.state.quizData };
+        quizData.isReady = true;
+        this.setState({
+            quizData: quizData
+        });
+    }
+
     render() {
 
-        let addedQuestions = null;
-        if (this.state.questions && this.state.questions.length > 0) {
-            addedQuestions = this.state.questions.map((question, i) => {
-                return (
-                    <AddedQuestion key={question.id ? question.id : i} question={question} questionNumber={i + 1} />
-                )
-            })
+        let createGameArea = <CreateGameInfo roomCode={this.state.quizData.roomCode} startAddingQuestions={this.onStartAddingQuestions} />;
+
+        if (this.state.addingQuestions && !this.state.quizData.isReady) {
+
+            let addedQuestions = null;
+            if (this.state.questions && this.state.questions.length > 0) {
+                addedQuestions = this.state.questions.map((question, i) => {
+                    return (
+                        <AddedQuestion key={question.id ? question.id : i} question={question} questionNumber={i + 1} />
+                    )
+                })
+            }
+            createGameArea = (
+                <React.Fragment>
+                    <div className={classes.createGameHeader}>
+                        Room Code: {this.state.quizData.roomCode}
+                        <button onClick={this.onFinish} className={[classes.finishButton, 'button clear-button large-button'].join(' ')} >Finish</button>
+                    </div>
+                    <div className={classes.createGameContent}>
+                        <AddQuestionForm question={this.state.questionToAdd} questionChange={this.onChangeQuestion} optionChange={this.onChangeOption} setCorrectOption={this.onSetCorrectOption} />
+                        <div className={classes.addQuestion}>
+                            <button className="button clear-button" onClick={this.onAddQuestion}>+ Add Question</button>
+                        </div>
+                        {addedQuestions}
+                    </div>
+                </React.Fragment>
+            )
+        }
+
+        if (this.state.quizData.isReady) {
+            createGameArea = <FinishGameInfo
+                adminCode={this.state.quizData.adminCode as number}
+                roomCode={this.state.quizData.roomCode}
+                startGame={this.onStartGame}
+                stopGame={this.onStopGame}
+                hasGameStarted={!!this.state.quizData.startedAtUtc} />
         }
 
         return (
+
             <div className={classes.createGame}>
                 <div className={classes.createGameContainer}>
-                    {this.state.addingQuestions ?
-                        <React.Fragment>
-                            <div className={classes.createGameHeader}>
-                                Room Code: {this.state.roomCode}
-                                <button onClick={this.onFinish} className={[classes.finishButton, 'button clear-button large-button'].join(' ')} >Finish</button>
-                            </div>
-                            <div className={classes.createGameContent}>
-                                <AddQuestionForm question={this.state.questionToAdd} questionChange={this.onChangeQuestion} optionChange={this.onChangeOption} setCorrectOption={this.onSetCorrectOption} />
-                                <div className={classes.addQuestion}>
-                                    <button className="button clear-button" onClick={this.onAddQuestion}>+ Add Question</button>
-                                </div>
-                                {addedQuestions}
-                            </div>
-                        </React.Fragment>
-                        :
-                        <CreateGameInfo roomCode={this.state.roomCode} startAddingQuestions={this.onStartAddingQuestions} />
-
-                    }
+                    {createGameArea}
                 </div>
             </div>
         )

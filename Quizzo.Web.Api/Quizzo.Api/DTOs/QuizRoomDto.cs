@@ -15,5 +15,7 @@ namespace Quizzo.Api.DTOs
         public DateTime? StartedAtUtc { get; set; }
 
         public DateTime? StoppedAtUtc { get; set; }
+
+        public bool IsReady { get; set; }
     }
 }

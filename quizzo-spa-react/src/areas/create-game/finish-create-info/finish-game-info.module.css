@@ -1,0 +1,30 @@
+.finishGameInfo {
+    padding: 40px 20px;
+    font-size: 2rem;
+    text-align: center;
+}
+
+.roomCode {
+    font-size: 3rem;
+    color: purple;
+}
+
+.inviteLinkInput {
+    padding: 10px 20px;
+    font-size: 1.5rem;
+    width: 334px;
+    text-align: center;
+    font-weight: bold;
+    color: purple;
+}
+
+.inviteArea {
+    display: flex;
+    flex-flow: row wrap;
+    align-items: center;
+    justify-content: center;
+}
+
+.inviteArea > * {
+    margin: 0 10px;
+}
