@@ -12,6 +12,8 @@ namespace Quizzo.Api.DTOs
 
         public string RoomCode { get; set; }
 
+        public string AdminCode { get; set; }
+
         public DateTime? StartedAtUtc { get; set; }
 
         public DateTime? StoppedAtUtc { get; set; }

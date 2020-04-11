@@ -19,5 +19,9 @@ namespace Quizzo.Api.Models
         public virtual QuizRoom QuizRoom { get; set; }
 
         public virtual ICollection<Response> Responses { get; set; }
+
+        public int Score { get; set; }
+
+        public int Rank { get; set; }
     }
 }

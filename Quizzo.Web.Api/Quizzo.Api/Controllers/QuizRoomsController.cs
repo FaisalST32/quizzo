@@ -124,6 +124,7 @@ namespace Quizzo.Api.Controllers
             var quizRoom = new QuizRoom()
             {
                 RoomCode = RandomString(6),
+                AdminCode = RandomString(8, true),
                 Name = $"Quizzo_{DateTime.UtcNow}", // some temporary name since we don't have a quiz name set in the app right now
             };
 
@@ -315,9 +316,17 @@ namespace Quizzo.Api.Controllers
             return _context.QuizRooms.Any(e => e.Id == id);
         }
 
-        private static string RandomString(int length)
+        private static string RandomString(int length, bool isNumeric = false)
         {
-            const string chars = "ABCDEFGHIJKLMNOPQRSTUVWXYZ0123456789";
+            string chars = isNumeric ? "0123456789" : "ABCDEFGHIJKLMNOPQRSTUVWXYZ0123456789";
+
+            return new string(Enumerable.Repeat(chars, length)
+              .Select(s => s[random.Next(s.Length)]).ToArray());
+        }
+
+        private static string RandomNumericString(int length)
+        {
+            const string chars = "0123456789";
             return new string(Enumerable.Repeat(chars, length)
               .Select(s => s[random.Next(s.Length)]).ToArray());
         }
