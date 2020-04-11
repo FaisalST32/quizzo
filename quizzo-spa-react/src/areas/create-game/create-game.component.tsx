@@ -222,7 +222,7 @@ class CreateGame extends Component<any, ICreateGameState> {
                 quizData: quizData
             }, () => {
                 this.props.hideLoader();
-                this.props.history.push(`results/${this.state.quizData.roomCode}/admin`);
+                this.props.history.push(`/results/${this.state.quizData.roomCode}/admin`);
             });
         } catch (err) {
             this.props.hideLoader();
