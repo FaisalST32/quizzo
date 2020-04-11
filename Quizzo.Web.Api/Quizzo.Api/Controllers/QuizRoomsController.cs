@@ -264,6 +264,9 @@ namespace Quizzo.Api.Controllers
                 await _context.SaveChangesAsync();
             }
 
+            return Ok();
+        }
+
         [HttpPost("{roomCode}/ReadyQuiz")]
         public async Task<IActionResult> ReadyQuiz(string roomCode)
         {
