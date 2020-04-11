@@ -121,7 +121,7 @@ namespace Quizzo.Api.Controllers
 
         [HttpPut("{id}")]
         [ApiExplorerSettings(IgnoreApi = true)]
-        public async Task<IActionResult> PutQuizRoom(Guid id, QuizRoom quizRoom)
+        public async Task<IActionResult> PutQuizRoom(int id, QuizRoom quizRoom)
         {
             if (id != quizRoom.Id)
             {
@@ -167,7 +167,7 @@ namespace Quizzo.Api.Controllers
 
         [HttpDelete("{id}")]
         [ApiExplorerSettings(IgnoreApi = true)]
-        public async Task<ActionResult<QuizRoom>> DeleteQuizRoom(Guid id)
+        public async Task<ActionResult<QuizRoom>> DeleteQuizRoom(int id)
         {
             var quizRoom = await _context.QuizRooms.FindAsync(id);
             if (quizRoom == null)
@@ -225,7 +225,7 @@ namespace Quizzo.Api.Controllers
 
                 foreach (var item in participants)
                 {
-                    var participantQuestions = new List<Guid>();
+                    var participantQuestions = new List<int>();
 
                     foreach (var response in item.Responses)
                     {
@@ -334,7 +334,7 @@ namespace Quizzo.Api.Controllers
             return Ok(roomExists);
         }
 
-        private bool QuizRoomExists(Guid id)
+        private bool QuizRoomExists(int id)
         {
             return _context.QuizRooms.Any(e => e.Id == id);
         }
@@ -347,7 +347,7 @@ namespace Quizzo.Api.Controllers
               .Select(s => s[random.Next(s.Length)]).ToArray());
         }
 
-        private async Task<List<Guid>> GetQuestionsAlreadyRespondedTo(string roomCode, string username)
+        private async Task<List<int>> GetQuestionsAlreadyRespondedTo(string roomCode, string username)
         {
             var participant = await _context.Participants.Include(c => c.Responses)
                 .FirstOrDefaultAsync(p => p.QuizRoom.RoomCode.ToLower() == roomCode.ToLower() && p.Name.ToLower() == username.ToLower());

@@ -6,12 +6,12 @@ namespace Quizzo.Api.Models
     public class Response : AuditableEntity
     {
         [Required]
-        public Guid QuestionId { get; set; }
+        public int QuestionId { get; set; }
 
         [Required]
         public virtual Question Question { get; set; }
 
-        public Guid? AnswerId { get; set; }
+        public int? AnswerId { get; set; }
 
         public virtual Answer Answer { get; set; }
 

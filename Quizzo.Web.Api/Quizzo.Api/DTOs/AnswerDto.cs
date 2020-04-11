@@ -5,7 +5,7 @@ namespace Quizzo.Api.DTOs
 {
     public class AnswerDto
     {
-        public Guid? Id { get; set; }
+        public int? Id { get; set; }
 
         [Required]
         public string AnswerText { get; set; }

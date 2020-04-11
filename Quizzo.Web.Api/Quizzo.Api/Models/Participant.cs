@@ -12,7 +12,7 @@ namespace Quizzo.Api.Models
 
         [Required]
         [JsonIgnore]
-        public Guid QuizRoomId { get; set; }
+        public int QuizRoomId { get; set; }
 
         [Required]
         [JsonIgnore]
