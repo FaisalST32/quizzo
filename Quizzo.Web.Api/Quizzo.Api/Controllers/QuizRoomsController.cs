@@ -158,6 +158,14 @@ namespace Quizzo.Api.Controllers
             return Ok(quizRoom.StartedAtUtc.HasValue && !quizRoom.StoppedAtUtc.HasValue);
         }
 
+        [HttpGet("{roomCode}/IsQuizReady")]
+        public async Task<IActionResult> IsQuizReady(string roomCode)
+        {
+            var quizRoom = await _context.QuizRooms.SingleAsync(q => q.RoomCode == roomCode);
+
+            return Ok(quizRoom.IsReady);
+        }
+
         [HttpPost("{roomCode}/StartQuiz")]
         public async Task<IActionResult> StartQuiz(string roomCode)
         {
@@ -176,11 +184,52 @@ namespace Quizzo.Api.Controllers
         [HttpPost("{roomCode}/StopQuiz")]
         public async Task<IActionResult> StopQuiz(string roomCode)
         {
-            var quizRoom = await _context.QuizRooms.SingleAsync(q => q.RoomCode == roomCode);
+            var quizRoom = await _context.QuizRooms.SingleAsync(q => q.RoomCode.ToLower() == roomCode.ToLower());
 
             if (!quizRoom.StoppedAtUtc.HasValue)
             {
+                var questions = await _context.Questions.Include(q => q.Answers.Where(a => a.IsCorrect)).Where(q => q.QuizRoom.RoomCode.ToLower() == roomCode.ToLower()).ToListAsync();
+                var participants = await _context.Participants.Include(p => p.Responses).Where(p => p.QuizRoom.RoomCode == roomCode).ToListAsync();
+                var responses = participants.SelectMany(c => c.Responses).ToList();
+
+                foreach (var item in participants)
+                {
+                    var participantQuestions = new List<Guid>();
+
+                    foreach (var response in item.Responses)
+                    {
+                        var question = questions.Single(q => q.Id == response.QuestionId);
+
+                        if (!participantQuestions.Any(q => q == response.QuestionId) && question.Answers.Any(a => a.Id == response.AnswerId))
+                        {
+                            item.Score += points;
+
+                            var fastestResponseTime = responses.Where(r => r.QuestionId == response.QuestionId && question.Answers.Any(a => a.Id == r.AnswerId)).Min(r => r.ResponseTime);
+
+                            if (response.ResponseTime == fastestResponseTime)
+                            {
+                                item.Score += points;
+                            }
+
+                            participantQuestions.Add(response.QuestionId);
+                        }
+                    }
+                }
+
+                var rank = 1;
+
+                foreach (var item in participants.OrderByDescending(l => l.Score).GroupBy(l => l.Score))
+                {
+                    foreach (var participant in item)
+                    {
+                        participant.Rank = rank;
+                    }
+
+                    rank++;
+                }
+
                 quizRoom.StoppedAtUtc = DateTime.UtcNow;
+
                 await _context.SaveChangesAsync();
             }
 
@@ -190,71 +239,14 @@ namespace Quizzo.Api.Controllers
         [HttpGet("{roomCode}/GetLeaderboard")]
         public async Task<IActionResult> GetLeaderboard(string roomCode)
         {
-            var leaderboard = new List<ParticipantDto>();
-
-            var participants = await _context.Participants.Include(p => p.Responses).ThenInclude(r => r.Question).ThenInclude(q => q.Answers).Where(p => p.QuizRoom.RoomCode == roomCode).ToListAsync();
-
-            var responses = participants.SelectMany(c => c.Responses).ToList();
-
-            foreach (var item in participants)
+            var leaderboard = await _context.Participants.Where(p => p.QuizRoom.RoomCode.ToLower() == roomCode.ToLower()).OrderByDescending(p => p.Rank).Select(p => new ParticipantDto()
             {
-                var questions = new List<Guid>();
+                Name = p.Name,
+                Rank = p.Rank,
+                Score = p.Score
+            }).Where(l => l.Rank <= 10).ToListAsync();
 
-                var participant = new ParticipantDto()
-                {
-                    Name = item.Name
-                };
-
-                foreach (var response in item.Responses)
-                {
-                    if (!questions.Any(q => q == response.QuestionId))
-                    {
-                        if (response.Question.Answers.Any(a => a.IsCorrect && a.Id == response.AnswerId))
-                        {
-                            participant.Score += points;
-
-                            long fastestResponseTime = 0;
-
-                            var correctResponses = responses
-                                .Where(q => q.QuestionId == response.QuestionId && q.AnswerId == q.Question.Answers.First(a => a.IsCorrect).Id).ToList();
-
-                            if (correctResponses != null)
-                            {
-                                fastestResponseTime = responses.Min(r => r.ResponseTime);
-                            }
-
-                            var isFastestCorrectReponse = response.ResponseTime == fastestResponseTime;
-
-                            if (isFastestCorrectReponse)
-                            {
-                                participant.Score += points;
-                            }
-
-                            questions.Add(response.QuestionId);
-                        }
-                    }
-                }
-
-                leaderboard.Add(participant);
-            }
-
-            leaderboard = leaderboard.OrderByDescending(l => l.Score).ToList();
-
-            var currentScore = 0;
-            var rank = 1;
-
-            foreach (var item in leaderboard)
-            {
-                if (item.Score < currentScore)
-                {
-                    rank++;
-                }
-
-                item.Rank = rank;
-                currentScore = item.Score;
-            }
-
-            return Ok(leaderboard.Where(l => l.Rank <= 10));
+            return Ok(leaderboard);
         }
 
         [HttpGet("{roomCode}/{username}/GetSolution")]
@@ -324,21 +316,8 @@ namespace Quizzo.Api.Controllers
               .Select(s => s[random.Next(s.Length)]).ToArray());
         }
 
-        private static string RandomNumericString(int length)
-        {
-            const string chars = "0123456789";
-            return new string(Enumerable.Repeat(chars, length)
-              .Select(s => s[random.Next(s.Length)]).ToArray());
-        }
-
         private async Task<List<Guid>> GetQuestionsAlreadyRespondedTo(string roomCode, string username)
         {
-            var quiz = await _context.QuizRooms.Select(q => q.RoomCode).SingleOrDefaultAsync(q => q.ToLower() == roomCode.ToLower());
-            if (quiz == null)
-            {
-                return null;
-            }
-
             var participant = await _context.Participants.Include(c => c.Responses)
                 .FirstOrDefaultAsync(p => p.QuizRoom.RoomCode.ToLower() == roomCode.ToLower() && p.Name.ToLower() == username.ToLower());
 

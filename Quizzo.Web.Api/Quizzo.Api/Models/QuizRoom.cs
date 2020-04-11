@@ -14,6 +14,8 @@ namespace Quizzo.Api.Models
 
         public string AdminCode { get; set; }
 
+        public bool IsReady { get; set; }
+
         public DateTime? StartedAtUtc { get; set; }
 
         public DateTime? StoppedAtUtc { get; set; }
