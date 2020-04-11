@@ -11,6 +11,14 @@ namespace Quizzo.Api.Models
 
         public virtual ICollection<Answer> Answers { get; set; }
 
+        public int? CorrectAnswerId { get; set; }
+
+        public virtual Answer CorrectAnswer { get; set; }
+
+        [Required]
+        [JsonIgnore]
+        public int QuizRoomId { get; set; }
+
         [Required]
         [JsonIgnore]
         public virtual QuizRoom QuizRoom { get; set; }

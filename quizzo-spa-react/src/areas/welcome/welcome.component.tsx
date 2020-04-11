@@ -9,7 +9,7 @@ interface IWelcomeState {
     showJoinBox: boolean;
     showGameAdmin: boolean;
     username: string;
-    passcode: string;
+    adminCode: string;
     inviteCode: string;
     errorMessage: string;
     hideInvite: boolean
@@ -22,7 +22,7 @@ class Welcome extends Component<any, IWelcomeState> {
             showJoinBox: false,
             showGameAdmin: false,
             inviteCode: '',
-            passcode: '',
+            adminCode: '',
             username: '',
             errorMessage: '',
             hideInvite: false
@@ -90,9 +90,9 @@ class Welcome extends Component<any, IWelcomeState> {
         });
     };
 
-    onChangePasscode = (e: any) => {
+    onChangeAdminCode = (e: any) => {
         this.setState({
-            passcode: e.target.value.trim(),
+            adminCode: e.target.value.trim(),
         });
     };
 
@@ -133,6 +133,7 @@ class Welcome extends Component<any, IWelcomeState> {
     };
 
     onGoToAdmin = async () => {
+
         if (!this.state.adminCode || !this.state.inviteCode) {
             this.showError('Please enter a valid Game Code and Admin Code');
             return;
@@ -219,7 +220,7 @@ class Welcome extends Component<any, IWelcomeState> {
                     onClick={this.onGameAdmin}
                     className="button clear-button"
                 >
-                    Game Admin
+                    Have an Admin Code?
                 </button>
             </div>
         );

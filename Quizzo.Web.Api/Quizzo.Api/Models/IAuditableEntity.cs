@@ -1,11 +1,10 @@
 ﻿using System;
-using System.ComponentModel.DataAnnotations;
 
 namespace Quizzo.Api.Models
 {
     interface IAuditableEntity
     {
-        Guid Id { get; set; }
+        int Id { get; set; }
 
         DateTime CreatedOnUtc { get; set; }
 

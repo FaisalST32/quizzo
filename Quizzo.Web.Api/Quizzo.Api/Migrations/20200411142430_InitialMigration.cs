@@ -1,9 +1,10 @@
 ﻿using System;
+using Microsoft.EntityFrameworkCore.Metadata;
 using Microsoft.EntityFrameworkCore.Migrations;
 
 namespace Quizzo.Api.Migrations
 {
-    public partial class servermigration : Migration
+    public partial class InitialMigration : Migration
     {
         protected override void Up(MigrationBuilder migrationBuilder)
         {
@@ -11,11 +12,14 @@ namespace Quizzo.Api.Migrations
                 name: "QuizRooms",
                 columns: table => new
                 {
-                    Id = table.Column<Guid>(nullable: false),
+                    Id = table.Column<int>(nullable: false)
+                        .Annotation("MySql:ValueGenerationStrategy", MySqlValueGenerationStrategy.IdentityColumn),
                     CreatedOnUtc = table.Column<DateTime>(nullable: false),
                     LastUpdatedOnUtc = table.Column<DateTime>(nullable: true),
                     Name = table.Column<string>(nullable: false),
                     RoomCode = table.Column<string>(nullable: false),
+                    AdminCode = table.Column<string>(nullable: true),
+                    IsReady = table.Column<bool>(nullable: false),
                     StartedAtUtc = table.Column<DateTime>(nullable: true),
                     StoppedAtUtc = table.Column<DateTime>(nullable: true)
                 },
@@ -28,11 +32,14 @@ namespace Quizzo.Api.Migrations
                 name: "Participants",
                 columns: table => new
                 {
-                    Id = table.Column<Guid>(nullable: false),
+                    Id = table.Column<int>(nullable: false)
+                        .Annotation("MySql:ValueGenerationStrategy", MySqlValueGenerationStrategy.IdentityColumn),
                     CreatedOnUtc = table.Column<DateTime>(nullable: false),
                     LastUpdatedOnUtc = table.Column<DateTime>(nullable: true),
                     Name = table.Column<string>(nullable: false),
-                    QuizRoomId = table.Column<Guid>(nullable: false)
+                    QuizRoomId = table.Column<int>(nullable: false),
+                    Score = table.Column<int>(nullable: false),
+                    Rank = table.Column<int>(nullable: false)
                 },
                 constraints: table =>
                 {
@@ -49,11 +56,13 @@ namespace Quizzo.Api.Migrations
                 name: "Questions",
                 columns: table => new
                 {
-                    Id = table.Column<Guid>(nullable: false),
+                    Id = table.Column<int>(nullable: false)
+                        .Annotation("MySql:ValueGenerationStrategy", MySqlValueGenerationStrategy.IdentityColumn),
                     CreatedOnUtc = table.Column<DateTime>(nullable: false),
                     LastUpdatedOnUtc = table.Column<DateTime>(nullable: true),
                     QuestionText = table.Column<string>(nullable: false),
-                    QuizRoomId = table.Column<Guid>(nullable: false)
+                    CorrectAnswerId = table.Column<int>(nullable: true),
+                    QuizRoomId = table.Column<int>(nullable: false)
                 },
                 constraints: table =>
                 {
@@ -70,12 +79,12 @@ namespace Quizzo.Api.Migrations
                 name: "Answers",
                 columns: table => new
                 {
-                    Id = table.Column<Guid>(nullable: false),
+                    Id = table.Column<int>(nullable: false)
+                        .Annotation("MySql:ValueGenerationStrategy", MySqlValueGenerationStrategy.IdentityColumn),
                     CreatedOnUtc = table.Column<DateTime>(nullable: false),
                     LastUpdatedOnUtc = table.Column<DateTime>(nullable: true),
                     AnswerText = table.Column<string>(nullable: false),
-                    IsCorrect = table.Column<bool>(nullable: false),
-                    QuestionId = table.Column<Guid>(nullable: true)
+                    QuestionId = table.Column<int>(nullable: true)
                 },
                 constraints: table =>
                 {
@@ -92,13 +101,14 @@ namespace Quizzo.Api.Migrations
                 name: "Responses",
                 columns: table => new
                 {
-                    Id = table.Column<Guid>(nullable: false),
+                    Id = table.Column<int>(nullable: false)
+                        .Annotation("MySql:ValueGenerationStrategy", MySqlValueGenerationStrategy.IdentityColumn),
                     CreatedOnUtc = table.Column<DateTime>(nullable: false),
                     LastUpdatedOnUtc = table.Column<DateTime>(nullable: true),
-                    QuestionId = table.Column<Guid>(nullable: false),
-                    AnswerId = table.Column<Guid>(nullable: true),
+                    QuestionId = table.Column<int>(nullable: false),
+                    AnswerId = table.Column<int>(nullable: true),
                     ResponseTime = table.Column<long>(nullable: false),
-                    ParticipantId = table.Column<Guid>(nullable: true)
+                    ParticipantId = table.Column<int>(nullable: true)
                 },
                 constraints: table =>
                 {
@@ -134,6 +144,11 @@ namespace Quizzo.Api.Migrations
                 column: "QuizRoomId");
 
             migrationBuilder.CreateIndex(
+                name: "IX_Questions_CorrectAnswerId",
+                table: "Questions",
+                column: "CorrectAnswerId");
+
+            migrationBuilder.CreateIndex(
                 name: "IX_Questions_QuizRoomId",
                 table: "Questions",
                 column: "QuizRoomId");
@@ -152,21 +167,33 @@ namespace Quizzo.Api.Migrations
                 name: "IX_Responses_QuestionId",
                 table: "Responses",
                 column: "QuestionId");
+
+            migrationBuilder.AddForeignKey(
+                name: "FK_Questions_Answers_CorrectAnswerId",
+                table: "Questions",
+                column: "CorrectAnswerId",
+                principalTable: "Answers",
+                principalColumn: "Id",
+                onDelete: ReferentialAction.Restrict);
         }
 
         protected override void Down(MigrationBuilder migrationBuilder)
         {
-            migrationBuilder.DropTable(
-                name: "Responses");
+            migrationBuilder.DropForeignKey(
+                name: "FK_Answers_Questions_QuestionId",
+                table: "Answers");
 
             migrationBuilder.DropTable(
-                name: "Answers");
+                name: "Responses");
 
             migrationBuilder.DropTable(
                 name: "Participants");
 
             migrationBuilder.DropTable(
                 name: "Questions");
+
+            migrationBuilder.DropTable(
+                name: "Answers");
 
             migrationBuilder.DropTable(
                 name: "QuizRooms");

@@ -6,7 +6,7 @@ namespace Quizzo.Api.Models
     public class AuditableEntity : IAuditableEntity
     {
         [Required]
-        public Guid Id { get; set; }
+        public int Id { get; set; }
 
         [Required]
         public DateTime CreatedOnUtc { get; set; }

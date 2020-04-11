@@ -12,12 +12,16 @@ namespace Quizzo.Api.Models
 
         [Required]
         [JsonIgnore]
-        public Guid QuizRoomId { get; set; }
+        public int QuizRoomId { get; set; }
 
         [Required]
         [JsonIgnore]
         public virtual QuizRoom QuizRoom { get; set; }
 
         public virtual ICollection<Response> Responses { get; set; }
+
+        public int Score { get; set; }
+
+        public int Rank { get; set; }
     }
 }

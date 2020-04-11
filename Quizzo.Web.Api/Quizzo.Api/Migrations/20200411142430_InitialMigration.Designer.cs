@@ -9,8 +9,8 @@ using Quizzo.Api.Models;
 namespace Quizzo.Api.Migrations
 {
     [DbContext(typeof(QuizzoContext))]
-    [Migration("20200411051853_servermigration")]
-    partial class servermigration
+    [Migration("20200411142430_InitialMigration")]
+    partial class InitialMigration
     {
         protected override void BuildTargetModel(ModelBuilder modelBuilder)
         {
@@ -21,9 +21,9 @@ namespace Quizzo.Api.Migrations
 
             modelBuilder.Entity("Quizzo.Api.Models.Answer", b =>
                 {
-                    b.Property<Guid>("Id")
+                    b.Property<int>("Id")
                         .ValueGeneratedOnAdd()
-                        .HasColumnType("char(36)");
+                        .HasColumnType("int");
 
                     b.Property<string>("AnswerText")
                         .IsRequired()
@@ -32,14 +32,11 @@ namespace Quizzo.Api.Migrations
                     b.Property<DateTime>("CreatedOnUtc")
                         .HasColumnType("datetime");
 
-                    b.Property<bool>("IsCorrect")
-                        .HasColumnType("tinyint(1)");
-
                     b.Property<DateTime?>("LastUpdatedOnUtc")
                         .HasColumnType("datetime");
 
-                    b.Property<Guid?>("QuestionId")
-                        .HasColumnType("char(36)");
+                    b.Property<int?>("QuestionId")
+                        .HasColumnType("int");
 
                     b.HasKey("Id");
 
@@ -50,9 +47,9 @@ namespace Quizzo.Api.Migrations
 
             modelBuilder.Entity("Quizzo.Api.Models.Participant", b =>
                 {
-                    b.Property<Guid>("Id")
+                    b.Property<int>("Id")
                         .ValueGeneratedOnAdd()
-                        .HasColumnType("char(36)");
+                        .HasColumnType("int");
 
                     b.Property<DateTime>("CreatedOnUtc")
                         .HasColumnType("datetime");
@@ -64,8 +61,14 @@ namespace Quizzo.Api.Migrations
                         .IsRequired()
                         .HasColumnType("longtext CHARACTER SET utf8mb4");
 
-                    b.Property<Guid>("QuizRoomId")
-                        .HasColumnType("char(36)");
+                    b.Property<int>("QuizRoomId")
+                        .HasColumnType("int");
+
+                    b.Property<int>("Rank")
+                        .HasColumnType("int");
+
+                    b.Property<int>("Score")
+                        .HasColumnType("int");
 
                     b.HasKey("Id");
 
@@ -76,9 +79,12 @@ namespace Quizzo.Api.Migrations
 
             modelBuilder.Entity("Quizzo.Api.Models.Question", b =>
                 {
-                    b.Property<Guid>("Id")
+                    b.Property<int>("Id")
                         .ValueGeneratedOnAdd()
-                        .HasColumnType("char(36)");
+                        .HasColumnType("int");
+
+                    b.Property<int?>("CorrectAnswerId")
+                        .HasColumnType("int");
 
                     b.Property<DateTime>("CreatedOnUtc")
                         .HasColumnType("datetime");
@@ -90,10 +96,12 @@ namespace Quizzo.Api.Migrations
                         .IsRequired()
                         .HasColumnType("longtext CHARACTER SET utf8mb4");
 
-                    b.Property<Guid>("QuizRoomId")
-                        .HasColumnType("char(36)");
+                    b.Property<int>("QuizRoomId")
+                        .HasColumnType("int");
 
                     b.HasKey("Id");
+
+                    b.HasIndex("CorrectAnswerId");
 
                     b.HasIndex("QuizRoomId");
 
@@ -102,12 +110,18 @@ namespace Quizzo.Api.Migrations
 
             modelBuilder.Entity("Quizzo.Api.Models.QuizRoom", b =>
                 {
-                    b.Property<Guid>("Id")
+                    b.Property<int>("Id")
                         .ValueGeneratedOnAdd()
-                        .HasColumnType("char(36)");
+                        .HasColumnType("int");
+
+                    b.Property<string>("AdminCode")
+                        .HasColumnType("longtext CHARACTER SET utf8mb4");
 
                     b.Property<DateTime>("CreatedOnUtc")
                         .HasColumnType("datetime");
+
+                    b.Property<bool>("IsReady")
+                        .HasColumnType("tinyint(1)");
 
                     b.Property<DateTime?>("LastUpdatedOnUtc")
                         .HasColumnType("datetime");
@@ -133,12 +147,12 @@ namespace Quizzo.Api.Migrations
 
             modelBuilder.Entity("Quizzo.Api.Models.Response", b =>
                 {
-                    b.Property<Guid>("Id")
+                    b.Property<int>("Id")
                         .ValueGeneratedOnAdd()
-                        .HasColumnType("char(36)");
+                        .HasColumnType("int");
 
-                    b.Property<Guid?>("AnswerId")
-                        .HasColumnType("char(36)");
+                    b.Property<int?>("AnswerId")
+                        .HasColumnType("int");
 
                     b.Property<DateTime>("CreatedOnUtc")
                         .HasColumnType("datetime");
@@ -146,11 +160,11 @@ namespace Quizzo.Api.Migrations
                     b.Property<DateTime?>("LastUpdatedOnUtc")
                         .HasColumnType("datetime");
 
-                    b.Property<Guid?>("ParticipantId")
-                        .HasColumnType("char(36)");
+                    b.Property<int?>("ParticipantId")
+                        .HasColumnType("int");
 
-                    b.Property<Guid>("QuestionId")
-                        .HasColumnType("char(36)");
+                    b.Property<int>("QuestionId")
+                        .HasColumnType("int");
 
                     b.Property<long>("ResponseTime")
                         .HasColumnType("bigint");
@@ -184,6 +198,10 @@ namespace Quizzo.Api.Migrations
 
             modelBuilder.Entity("Quizzo.Api.Models.Question", b =>
                 {
+                    b.HasOne("Quizzo.Api.Models.Answer", "CorrectAnswer")
+                        .WithMany()
+                        .HasForeignKey("CorrectAnswerId");
+
                     b.HasOne("Quizzo.Api.Models.QuizRoom", "QuizRoom")
                         .WithMany("Questions")
                         .HasForeignKey("QuizRoomId")

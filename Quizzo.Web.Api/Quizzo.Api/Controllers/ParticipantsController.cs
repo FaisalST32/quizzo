@@ -32,7 +32,7 @@ namespace Quizzo.Api.Controllers
 
         [HttpGet("{id}")]
         [ApiExplorerSettings(IgnoreApi = true)]
-        public async Task<ActionResult<Participant>> GetParticipant(Guid id)
+        public async Task<ActionResult<Participant>> GetParticipant(int id)
         {
             var participant = await _context.Participants.FindAsync(id);
 
@@ -46,7 +46,7 @@ namespace Quizzo.Api.Controllers
 
         [HttpPut("{id}")]
         [ApiExplorerSettings(IgnoreApi = true)]
-        public async Task<IActionResult> PutParticipant(Guid id, Participant participant)
+        public async Task<IActionResult> PutParticipant(int id, Participant participant)
         {
             if (id != participant.Id)
             {
@@ -94,7 +94,7 @@ namespace Quizzo.Api.Controllers
 
         [HttpDelete("{id}")]
         [ApiExplorerSettings(IgnoreApi = true)]
-        public async Task<ActionResult<Participant>> DeleteParticipant(Guid id)
+        public async Task<ActionResult<Participant>> DeleteParticipant(int id)
         {
             var participant = await _context.Participants.FindAsync(id);
             if (participant == null)
@@ -108,7 +108,7 @@ namespace Quizzo.Api.Controllers
             return participant;
         }
 
-        private bool ParticipantExists(Guid id)
+        private bool ParticipantExists(int id)
         {
             return _context.Participants.Any(e => e.Id == id);
         }
