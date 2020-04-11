@@ -6,11 +6,13 @@ import AddedQuestion from './added-question/added-question.component';
 import { IAnswer } from '../../interfaces/IAnswer';
 import { config } from '../../environments/environment.dev';
 import axios from 'axios';
+import CreateGameInfo from './create-game-info/create-game-info.component';
 
 interface ICreateGameState {
     roomCode: string;
     questions: IQuestion[];
-    questionToAdd: IQuestion
+    questionToAdd: IQuestion;
+    addingQuestions: boolean;
 }
 
 class CreateGame extends Component<any, ICreateGameState> {
@@ -38,9 +40,10 @@ class CreateGame extends Component<any, ICreateGameState> {
     constructor(props: any) {
         super(props);
         this.state = {
-            roomCode: '00000',
+            roomCode: '',
             questions: [],
-            questionToAdd: this.emptyQuestion
+            questionToAdd: this.emptyQuestion,
+            addingQuestions: false
         }
     }
 
@@ -49,7 +52,8 @@ class CreateGame extends Component<any, ICreateGameState> {
         const questions = await this.getGameQuestions(roomCode);
         this.setState({
             roomCode: roomCode,
-            questions: questions
+            questions: questions,
+            addingQuestions: questions?.length > 0
         })
     }
 
@@ -145,6 +149,12 @@ class CreateGame extends Component<any, ICreateGameState> {
         this.props.history.push('/');
     }
 
+    onStartAddingQuestions = () => {
+        this.setState({
+            addingQuestions: true
+        })
+    }
+
     render() {
 
         let addedQuestions = null;
@@ -159,17 +169,24 @@ class CreateGame extends Component<any, ICreateGameState> {
         return (
             <div className={classes.createGame}>
                 <div className={classes.createGameContainer}>
-                    <div className={classes.createGameHeader}>
-                        Game ID: {this.state.roomCode}
-                        <button onClick={this.onFinish} className={[classes.finishButton, 'button clear-button large-button'].join(' ')} >Finish</button>
-                    </div>
-                    <div className={classes.createGameContent}>
-                        <AddQuestionForm question={this.state.questionToAdd} questionChange={this.onChangeQuestion} optionChange={this.onChangeOption} setCorrectOption={this.onSetCorrectOption} />
-                        <div className={classes.addQuestion}>
-                            <button className="button clear-button" onClick={this.onAddQuestion}>+ Add Question</button>
-                        </div>
-                        {addedQuestions}
-                    </div>
+                    {this.state.addingQuestions ?
+                        <React.Fragment>
+                            <div className={classes.createGameHeader}>
+                                Room Code: {this.state.roomCode}
+                                <button onClick={this.onFinish} className={[classes.finishButton, 'button clear-button large-button'].join(' ')} >Finish</button>
+                            </div>
+                            <div className={classes.createGameContent}>
+                                <AddQuestionForm question={this.state.questionToAdd} questionChange={this.onChangeQuestion} optionChange={this.onChangeOption} setCorrectOption={this.onSetCorrectOption} />
+                                <div className={classes.addQuestion}>
+                                    <button className="button clear-button" onClick={this.onAddQuestion}>+ Add Question</button>
+                                </div>
+                                {addedQuestions}
+                            </div>
+                        </React.Fragment>
+                        :
+                        <CreateGameInfo roomCode={this.state.roomCode} startAddingQuestions={this.onStartAddingQuestions} />
+
+                    }
                 </div>
             </div>
         )

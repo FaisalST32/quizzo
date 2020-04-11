@@ -1,0 +1,11 @@
+.createGameInfo {
+    padding: 40px 20px;
+    font-size: 2rem;
+    text-align: center;
+}
+
+.createGameInfo .roomCode {
+    font-size: 3rem;
+    font-weight: bold;
+    color: purple;
+}
