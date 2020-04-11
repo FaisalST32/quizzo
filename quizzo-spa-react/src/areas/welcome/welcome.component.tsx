@@ -7,7 +7,9 @@ import { IQuiz } from '../../interfaces/IQuiz';
 
 interface IWelcomeState {
     showJoinBox: boolean;
+    showGameAdmin: boolean;
     username: string;
+    passcode: string;
     inviteCode: string;
     errorMessage: string;
     hideInvite: boolean
@@ -18,7 +20,9 @@ class Welcome extends Component<any, IWelcomeState> {
         super(props);
         this.state = {
             showJoinBox: false,
+            showGameAdmin: false,
             inviteCode: '',
+            passcode: '',
             username: '',
             errorMessage: '',
             hideInvite: false
@@ -54,6 +58,7 @@ class Welcome extends Component<any, IWelcomeState> {
     onShowJoin = () => {
         this.setState({
             showJoinBox: true,
+            showGameAdmin: false,
         });
     };
 
@@ -66,6 +71,13 @@ class Welcome extends Component<any, IWelcomeState> {
         });
     };
 
+    onGameAdmin = () => {
+        this.setState({
+            showJoinBox: false,
+            showGameAdmin: true,
+        });
+    };
+
     onChangeInviteCode = (e: any) => {
         this.setState({
             inviteCode: e.target.value.trim(),
@@ -75,6 +87,12 @@ class Welcome extends Component<any, IWelcomeState> {
     onChangeUserName = (e: any) => {
         this.setState({
             username: e.target.value.trim(),
+        });
+    };
+
+    onChangePasscode = (e: any) => {
+        this.setState({
+            passcode: e.target.value.trim(),
         });
     };
 
@@ -196,6 +214,12 @@ class Welcome extends Component<any, IWelcomeState> {
                     className="button large-button danger-button"
                 >
                     I have an Invite Code
+                </button>
+                <button
+                    onClick={this.onGameAdmin}
+                    className="button clear-button"
+                >
+                    Game Admin
                 </button>
             </div>
         );
