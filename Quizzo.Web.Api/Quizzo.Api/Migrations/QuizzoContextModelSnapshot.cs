@@ -30,9 +30,6 @@ namespace Quizzo.Api.Migrations
                     b.Property<DateTime>("CreatedOnUtc")
                         .HasColumnType("datetime");
 
-                    b.Property<bool>("IsCorrect")
-                        .HasColumnType("tinyint(1)");
-
                     b.Property<DateTime?>("LastUpdatedOnUtc")
                         .HasColumnType("datetime");
 
@@ -84,6 +81,9 @@ namespace Quizzo.Api.Migrations
                         .ValueGeneratedOnAdd()
                         .HasColumnType("int");
 
+                    b.Property<int?>("CorrectAnswerId")
+                        .HasColumnType("int");
+
                     b.Property<DateTime>("CreatedOnUtc")
                         .HasColumnType("datetime");
 
@@ -98,6 +98,8 @@ namespace Quizzo.Api.Migrations
                         .HasColumnType("int");
 
                     b.HasKey("Id");
+
+                    b.HasIndex("CorrectAnswerId");
 
                     b.HasIndex("QuizRoomId");
 
@@ -194,6 +196,10 @@ namespace Quizzo.Api.Migrations
 
             modelBuilder.Entity("Quizzo.Api.Models.Question", b =>
                 {
+                    b.HasOne("Quizzo.Api.Models.Answer", "CorrectAnswer")
+                        .WithMany()
+                        .HasForeignKey("CorrectAnswerId");
+
                     b.HasOne("Quizzo.Api.Models.QuizRoom", "QuizRoom")
                         .WithMany("Questions")
                         .HasForeignKey("QuizRoomId")

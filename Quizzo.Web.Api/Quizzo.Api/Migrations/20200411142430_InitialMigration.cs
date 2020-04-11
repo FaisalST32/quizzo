@@ -61,6 +61,7 @@ namespace Quizzo.Api.Migrations
                     CreatedOnUtc = table.Column<DateTime>(nullable: false),
                     LastUpdatedOnUtc = table.Column<DateTime>(nullable: true),
                     QuestionText = table.Column<string>(nullable: false),
+                    CorrectAnswerId = table.Column<int>(nullable: true),
                     QuizRoomId = table.Column<int>(nullable: false)
                 },
                 constraints: table =>
@@ -83,7 +84,6 @@ namespace Quizzo.Api.Migrations
                     CreatedOnUtc = table.Column<DateTime>(nullable: false),
                     LastUpdatedOnUtc = table.Column<DateTime>(nullable: true),
                     AnswerText = table.Column<string>(nullable: false),
-                    IsCorrect = table.Column<bool>(nullable: false),
                     QuestionId = table.Column<int>(nullable: true)
                 },
                 constraints: table =>
@@ -144,6 +144,11 @@ namespace Quizzo.Api.Migrations
                 column: "QuizRoomId");
 
             migrationBuilder.CreateIndex(
+                name: "IX_Questions_CorrectAnswerId",
+                table: "Questions",
+                column: "CorrectAnswerId");
+
+            migrationBuilder.CreateIndex(
                 name: "IX_Questions_QuizRoomId",
                 table: "Questions",
                 column: "QuizRoomId");
@@ -162,21 +167,33 @@ namespace Quizzo.Api.Migrations
                 name: "IX_Responses_QuestionId",
                 table: "Responses",
                 column: "QuestionId");
+
+            migrationBuilder.AddForeignKey(
+                name: "FK_Questions_Answers_CorrectAnswerId",
+                table: "Questions",
+                column: "CorrectAnswerId",
+                principalTable: "Answers",
+                principalColumn: "Id",
+                onDelete: ReferentialAction.Restrict);
         }
 
         protected override void Down(MigrationBuilder migrationBuilder)
         {
-            migrationBuilder.DropTable(
-                name: "Responses");
+            migrationBuilder.DropForeignKey(
+                name: "FK_Answers_Questions_QuestionId",
+                table: "Answers");
 
             migrationBuilder.DropTable(
-                name: "Answers");
+                name: "Responses");
 
             migrationBuilder.DropTable(
                 name: "Participants");
 
             migrationBuilder.DropTable(
                 name: "Questions");
+
+            migrationBuilder.DropTable(
+                name: "Answers");
 
             migrationBuilder.DropTable(
                 name: "QuizRooms");

@@ -4,6 +4,7 @@ using Microsoft.EntityFrameworkCore;
 using Quizzo.Api.DTOs;
 using Quizzo.Api.Models;
 using System;
+using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
 
@@ -40,7 +41,7 @@ namespace Quizzo.Api.Controllers
                     {
                         Id = a.Id,
                         AnswerText = a.AnswerText,
-                        IsCorrect = a.IsCorrect
+                        IsCorrect = a.Id == q.CorrectAnswerId
                     }).ToList()
                 }).ToListAsync();
 
@@ -94,11 +95,35 @@ namespace Quizzo.Api.Controllers
         [HttpPost("{roomCode}/PostQuestion")]
         public async Task<ActionResult<Question>> PostQuestion(string roomCode, QuestionDto questionDto)
         {
-            var question = _mapper.Map<Question>(questionDto);
+            var correctAnswer = new Answer();
+
+            var question = new Question()
+            {
+                QuestionText = questionDto.QuestionText,
+                Answers = new List<Answer>()
+            };
+
+            foreach (var item in questionDto.Answers)
+            {
+                var answer = new Answer()
+                {
+                    AnswerText = item.AnswerText
+                };
+
+                if (item.IsCorrect.HasValue && item.IsCorrect.Value)
+                {
+                    correctAnswer = answer;
+                }
+
+                question.Answers.Add(answer);
+            }
 
             var quizRoom = await _context.QuizRooms.Include(q => q.Questions).SingleAsync(q => q.RoomCode == roomCode);
 
             quizRoom.Questions.Add(question);
+            await _context.SaveChangesAsync();
+
+            question.CorrectAnswer = correctAnswer;
             await _context.SaveChangesAsync();
 
             return Ok(question);
