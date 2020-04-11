@@ -233,16 +233,16 @@ namespace Quizzo.Api.Controllers
 
                         if (!participantQuestions.Any(q => q == response.QuestionId) && question.CorrectAnswerId == response.AnswerId)
                         {
-                            item.Score += points;
+                            response.Score += points;
 
                             var fastestResponseTime = responses.Where(r => r.QuestionId == response.QuestionId && r.AnswerId == question.CorrectAnswerId).Min(r => r.ResponseTime);
 
                             if (response.ResponseTime == fastestResponseTime)
                             {
-                                item.Score += points;
+                                response.Score += points;
                             }
 
-                            response.Score = item.Score;
+                            item.Score += response.Score;
 
                             participantQuestions.Add(response.QuestionId);
                         }
