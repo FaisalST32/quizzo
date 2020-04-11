@@ -199,12 +199,21 @@ class CreateGame extends Component<any, ICreateGameState> {
     onStartGame = async () => {
         if (this.state.quizData.startedAtUtc)
             return;
-        await axios.post(`${config.apiUrl}quizrooms/${this.state.quizData.roomCode}/startquiz`);
-        const quizData = { ...this.state.quizData };
-        quizData.startedAtUtc = new Date(new Date().toUTCString())
-        this.setState({
-            quizData: quizData
-        });
+
+        this.props.showLoader()
+        
+        try {
+            await axios.post(`${config.apiUrl}quizrooms/${this.state.quizData.roomCode}/startquiz`);
+            const quizData = { ...this.state.quizData };
+            quizData.startedAtUtc = new Date(new Date().toUTCString())
+            this.setState({
+                quizData: quizData
+            });
+            this.props.hideLoader();
+        } catch (err) {
+            this.props.hideLoader();
+        }
+
     }
 
     onStopGame = async () => {

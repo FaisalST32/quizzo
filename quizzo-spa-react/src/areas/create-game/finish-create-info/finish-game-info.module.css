@@ -28,3 +28,15 @@
 .inviteArea > * {
     margin: 0 10px;
 }
+
+
+@media screen and (max-width: 991px) {
+    .finishGameInfo {
+        font-size: 1.2rem;
+    }
+    
+    .roomCode {
+        font-size: 2rem;
+        color: purple;
+    }
+  }

@@ -1,11 +1,22 @@
 .createGameInfo {
-    padding: 40px 20px;
-    font-size: 2rem;
-    text-align: center;
+  padding: 40px 20px;
+  font-size: 2rem;
+  text-align: center;
 }
 
 .createGameInfo .roomCode {
-    font-size: 3rem;
-    font-weight: bold;
-    color: purple;
+  font-size: 3rem;
+  font-weight: bold;
+  color: purple;
+}
+
+@media screen and (max-width: 991px) {
+  .createGameInfo {
+    padding: 20px 20px;
+    font-size: 1.2rem;
+  }
+
+  .createGameInfo .roomCode {
+    font-size: 2rem;
+  }
 }

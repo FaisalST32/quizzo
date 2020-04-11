@@ -20,14 +20,20 @@ class Solution extends Component<any, ISolutionState> {
         };
     }
     componentDidMount = async () => {
-        const roomCode = this.props.match.params.id;
-        const username = this.props.match.params.username;
-        const solutions = await this.getSolutions(roomCode, username);
-        this.setState({
-            solutions: solutions,
-            username: username,
-            roomCode: roomCode,
-        });
+        try {
+            this.props.showLoader()
+            const roomCode = this.props.match.params.id;
+            const username = this.props.match.params.username;
+            const solutions = await this.getSolutions(roomCode, username);
+            this.setState({
+                solutions: solutions,
+                username: username,
+                roomCode: roomCode,
+            });
+            this.props.hideLoader();
+        } catch (err) {
+            this.props.hideLoader();
+        }
     };
 
     onShowResults = () => {
@@ -79,7 +85,7 @@ class Solution extends Component<any, ISolutionState> {
                                     <span
                                         className={
                                             solution.correctAnswerText ===
-                                            solution.selectedAnswerText
+                                                solution.selectedAnswerText
                                                 ? classes.solutionCorrect
                                                 : classes.solutionWrong
                                         }
