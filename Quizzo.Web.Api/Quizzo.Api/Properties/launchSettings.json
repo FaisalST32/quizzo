@@ -15,7 +15,8 @@
       "launchUrl": "anfield",
       "environmentVariables": {
         "ASPNETCORE_ENVIRONMENT": "Development"
-      }
+      },
+      "ancmHostingModel": "OutOfProcess"
     },
     "Quizzo": {
       "commandName": "Project",

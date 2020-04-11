@@ -23,7 +23,10 @@ namespace Quizzo.Api
         public void ConfigureServices(IServiceCollection services)
         {
             services.AddDbContext<QuizzoContext>(opt =>
-                  opt.UseSqlServer(Configuration.GetConnectionString("DefaultConnection")));
+                  opt.UseMySql(Configuration.GetConnectionString("DefaultMySqlConnection"), options => options
+                    .ServerVersion(new System.Version(5, 5, 51), Pomelo.EntityFrameworkCore.MySql.Infrastructure.ServerType.MySql)
+                  ));
+                  //opt.UseSqlServer(Configuration.GetConnectionString("DefaultConnection")));
 
             services.AddCors();
 
