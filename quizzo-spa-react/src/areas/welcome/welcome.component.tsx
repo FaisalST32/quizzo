@@ -7,7 +7,9 @@ import { IQuiz } from '../../interfaces/IQuiz';
 
 interface IWelcomeState {
     showJoinBox: boolean;
+    showGameAdmin: boolean;
     username: string;
+    passcode: string;
     inviteCode: string;
     errorMessage: string;
 }
@@ -17,7 +19,9 @@ class Welcome extends Component<any, IWelcomeState> {
         super(props);
         this.state = {
             showJoinBox: false,
+            showGameAdmin: false,
             inviteCode: '',
+            passcode: '',
             username: '',
             errorMessage: '',
         };
@@ -46,12 +50,21 @@ class Welcome extends Component<any, IWelcomeState> {
     onShowJoin = () => {
         this.setState({
             showJoinBox: true,
+            showGameAdmin: false,
         });
     };
 
     onShowWelcomeButtons = () => {
         this.setState({
             showJoinBox: false,
+            showGameAdmin: false,
+        });
+    };
+
+    onGameAdmin = () => {
+        this.setState({
+            showJoinBox: false,
+            showGameAdmin: true,
         });
     };
 
@@ -67,9 +80,51 @@ class Welcome extends Component<any, IWelcomeState> {
         });
     };
 
+    onChangePasscode = (e: any) => {
+        this.setState({
+            passcode: e.target.value.trim(),
+        });
+    };
+
     onJoinRoom = async () => {
         if (!this.state.username || !this.state.inviteCode) {
             this.showError('Please enter a valid Invite Code and Name');
+            return;
+        }
+
+        try {
+            this.props.showLoader();
+            const roomExists = await this.checkRoomExists(
+                this.state.inviteCode
+            );
+            if (!roomExists) {
+                this.props.hideLoader();
+                this.showError('Invite Code is invalid');
+                return;
+            }
+
+            const resp = await this.addParticipantToGame(
+                this.state.username,
+                this.state.inviteCode
+            );
+            if (resp.data === 'exists') {
+                this.showError('Username already taken');
+                this.props.hideLoader();
+                return;
+            }
+
+            this.props.history.push(
+                `/game/${this.state.inviteCode}/${this.state.username}`
+            );
+            this.props.hideLoader();
+        } catch (err) {
+            this.props.hideLoader();
+        }
+    };
+
+    onEnterGame = async () => {
+        if (!this.state.passcode || !this.state.inviteCode) {
+            this.showError('Please enter a valid Game Code and Passcode');
             return;
         }
 
@@ -126,6 +181,7 @@ class Welcome extends Component<any, IWelcomeState> {
             errorMessage: message,
         });
     };
+
     render() {
         let welcomeActions = (
             <div className={classes.welcomeButtons}>
@@ -140,6 +196,12 @@ class Welcome extends Component<any, IWelcomeState> {
                     className="button large-button danger-button"
                 >
                     I have an Invite Code
+                </button>
+                <button
+                    onClick={this.onGameAdmin}
+                    className="button clear-button"
+                >
+                    Game Admin
                 </button>
             </div>
         );
@@ -178,17 +240,55 @@ class Welcome extends Component<any, IWelcomeState> {
                 </div>
             );
         }
+        if (this.state.showGameAdmin) {
+            welcomeActions = (
+                <div className={classes.joinGame}>
+                    <input
+                        className="input large-input"
+                        type="text"
+                        value={this.state.inviteCode}
+                        onChange={this.onChangeInviteCode}
+                        placeholder="Game Code"
+                    />
+                    <input
+                        className="input large-input"
+                        type="text"
+                        value={this.state.passcode}
+                        onChange={this.onChangePasscode}
+                        placeholder="Passcode"
+                        style={{ marginTop: '20px' }}
+                    />
+                    <button
+                        className="button large-button success-button"
+                        style={{ marginTop: '20px' }}
+                        onClick={this.onEnterGame}
+                    >
+                        Enter Game
+                    </button>
+                    <button
+                        className="button clear-button"
+                        onClick={this.onShowWelcomeButtons}
+                        style={{ marginTop: '20px' }}
+                    >
+                        Back
+                    </button>
+                </div>
+            );
+        }
         return (
             <div className={classes.welcome}>
                 <div className={classes.welcomeContainer}>
                     <div className={classes.welcomeHeader}>
                         Welcome to <span>Quizzo</span>
                     </div>
-                    {(this.state.errorMessage && this.state.showJoinBox ?
+                    {this.state.errorMessage &&
+                    (this.state.showJoinBox || this.state.showGameAdmin) ? (
                         <div className={classes.error}>
                             {this.state.errorMessage}
                         </div>
-                        : '')}
+                    ) : (
+                        ''
+                    )}
 
                     <div className={classes.welcomeActions}>
                         {welcomeActions}
