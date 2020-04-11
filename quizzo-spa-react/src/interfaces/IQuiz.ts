@@ -1,8 +1,10 @@
 import { IQuestion } from './IQuestion';
 export interface IQuiz {
-    name: string;
+    name?: string;
     roomCode: string;
     startedAtUtc?: Date;
     stoppedAtUtc?: Date;
-    questions: IQuestion[];
+    questions?: IQuestion[];
+    adminCode?: number;
+    isReady?: boolean;
 }

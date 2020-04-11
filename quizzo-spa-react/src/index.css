@@ -24,6 +24,10 @@ code {
   padding: 10px 20px;
 }
 
+.clear-button:active {
+  filter: brightness(85%);
+}
+
 .large-button {
   font-size: 1.5rem;
   font-weight: bolder;
@@ -63,12 +67,19 @@ code {
   background-color: transparent;
 }
 
+.clear-button:active {
+  background-color: rgb(128, 0, 128, 0.3);
+  color: white;
+}
+
 .input {
   transition: all 100ms ease-out;
   border-color: #d31027;
   outline: none;
   border-radius: 5px;
 }
+
+
 
 .large-input {
   font-size: 1.5rem;

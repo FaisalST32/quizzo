@@ -12,6 +12,7 @@ interface IWelcomeState {
     adminCode: string;
     inviteCode: string;
     errorMessage: string;
+    hideInvite: boolean
 }
 
 class Welcome extends Component<any, IWelcomeState> {
@@ -24,27 +25,34 @@ class Welcome extends Component<any, IWelcomeState> {
             adminCode: '',
             username: '',
             errorMessage: '',
+            hideInvite: false
         };
+    }
+
+    componentDidMount = async () => {
+        const inviteCode = this.props.match.params.roomCode;
+        if (inviteCode) {
+            await this.validateInviteCode(inviteCode);
+        }
     }
 
     onCreateGame = async () => {
         try {
             this.props.showLoader();
-            const roomCode = await this.createNewQuiz();
+            const [roomCode, adminCode] = await this.createNewQuiz();
             this.props.hideLoader();
-            this.props.history.push(`/create-game/${roomCode}`);
+            this.props.history.push(`/create-game/${roomCode}/${adminCode}`);
         } catch (err) {
             this.props.hideLoader();
         }
     };
 
-    createNewQuiz = async (): Promise<string> => {
+    createNewQuiz = async (): Promise<[string, number?]> => {
         const resp = await axios.post<IQuiz>(
             `${config.apiUrl}quizrooms/create`
         );
         console.log(resp);
-        const roomCode: string = resp.data.roomCode;
-        return roomCode;
+        return [resp.data.roomCode, resp.data.adminCode];
     };
 
     onShowJoin = () => {
@@ -58,6 +66,8 @@ class Welcome extends Component<any, IWelcomeState> {
         this.setState({
             showJoinBox: false,
             showGameAdmin: false,
+            inviteCode: '',
+            hideInvite: false
         });
     };
 
@@ -122,7 +132,8 @@ class Welcome extends Component<any, IWelcomeState> {
         }
     };
 
-    onEnterGame = async () => {
+    onGoToAdmin = async () => {
+
         if (!this.state.adminCode || !this.state.inviteCode) {
             this.showError('Please enter a valid Game Code and Admin Code');
             return;
@@ -130,33 +141,19 @@ class Welcome extends Component<any, IWelcomeState> {
 
         try {
             this.props.showLoader();
-            const roomExists = await this.checkRoomExists(
-                this.state.inviteCode
-            );
+            const roomExists = await this.checkRoomExists(this.state.inviteCode);
             if (!roomExists) {
                 this.props.hideLoader();
                 this.showError('Invite Code is invalid');
                 return;
             }
-
-            const resp = await this.addParticipantToGame(
-                this.state.username,
-                this.state.inviteCode
-            );
-            if (resp.data === 'exists') {
-                this.showError('Username already taken');
-                this.props.hideLoader();
-                return;
-            }
-
-            this.props.history.push(
-                `/game/${this.state.inviteCode}/${this.state.username}`
-            );
             this.props.hideLoader();
+            this.props.history.push(`/create-game/${this.state.inviteCode}/${this.state.adminCode}`);
         } catch (err) {
             this.props.hideLoader();
         }
     };
+
 
     addParticipantToGame = async (username: string, roomCode: string) => {
         const participant: IParticipant = { name: username, score: 0, rank: 0 };
@@ -167,7 +164,8 @@ class Welcome extends Component<any, IWelcomeState> {
     };
 
     checkRoomExists = async (roomCode: string): Promise<boolean> => {
-        if (!roomCode) return false;
+        if (!roomCode)
+            return false;
         const roomExists: boolean = (
             await axios.get<boolean>(
                 `${config.apiUrl}quizrooms/roomexists/${roomCode}`
@@ -181,6 +179,27 @@ class Welcome extends Component<any, IWelcomeState> {
             errorMessage: message,
         });
     };
+
+    validateInviteCode = async (inviteCode: string) => {
+        try {
+            this.props.showLoader();
+            const roomExists = await this.checkRoomExists(inviteCode);
+            this.props.hideLoader();
+            if (roomExists) {
+                this.setState({
+                    inviteCode: inviteCode,
+                    showJoinBox: true,
+                    hideInvite: true
+                });
+            }
+            else {
+                this.showError('Invalid Link');
+            }
+        }
+        catch (err) {
+            this.props.hideLoader();
+        }
+    }
 
     render() {
         let welcomeActions = (
@@ -208,13 +227,19 @@ class Welcome extends Component<any, IWelcomeState> {
         if (this.state.showJoinBox) {
             welcomeActions = (
                 <div className={classes.joinGame}>
-                    <input
-                        className="input large-input"
-                        type="text"
-                        value={this.state.inviteCode}
-                        onChange={this.onChangeInviteCode}
-                        placeholder="Invite Code"
-                    />
+                    {
+                        this.state.hideInvite ?
+                            null :
+                            <input
+                                className="input large-input"
+                                type="text"
+                                value={this.state.inviteCode}
+                                onChange={this.onChangeInviteCode}
+                                placeholder="Invite Code"
+                            />
+                    }
+
+
                     <input
                         className="input large-input"
                         type="text"
@@ -261,7 +286,7 @@ class Welcome extends Component<any, IWelcomeState> {
                     <button
                         className="button large-button success-button"
                         style={{ marginTop: '20px' }}
-                        onClick={this.onEnterGame}
+                        onClick={this.onGoToAdmin}
                     >
                         Enter Game
                     </button>
@@ -282,13 +307,13 @@ class Welcome extends Component<any, IWelcomeState> {
                         Welcome to <span>Quizzo</span>
                     </div>
                     {this.state.errorMessage &&
-                    (this.state.showJoinBox || this.state.showGameAdmin) ? (
-                        <div className={classes.error}>
-                            {this.state.errorMessage}
-                        </div>
-                    ) : (
-                        ''
-                    )}
+                        (this.state.showJoinBox || this.state.showGameAdmin) ? (
+                            <div className={classes.error}>
+                                {this.state.errorMessage}
+                            </div>
+                        ) : (
+                            ''
+                        )}
 
                     <div className={classes.welcomeActions}>
                         {welcomeActions}

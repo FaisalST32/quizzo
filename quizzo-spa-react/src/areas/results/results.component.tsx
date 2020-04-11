@@ -3,8 +3,6 @@ import classes from './results.module.css';
 import victoryGif from '../../assets/gifs/lfc_victory.gif';
 import { config } from '../../environments/environment.dev';
 import axios from 'axios';
-// import victoryGif2 from '../../assets/gifs/lfc_victory.gif';
-
 import { IParticipant } from '../../interfaces/IParticipant';
 import { Link } from 'react-router-dom';
 import ResultsWaiting from './results-waiting/results-waiting.component';
@@ -19,9 +17,6 @@ interface IResultsState {
 }
 
 class Results extends Component<any, IResultsState> {
-    // victoryGifs: string[] = [
-
-    // ]
     constructor(props: any) {
         super(props);
         this.state = {
@@ -81,11 +76,16 @@ class Results extends Component<any, IResultsState> {
     }
 
     setLeaderboard = async (roomCode: string) => {
-        const leaderboard = await this.getLeaderboard(roomCode);
-        this.setState({
-            leaderboard: leaderboard
-        })
-
+        this.props.showLoader(true);
+        try {
+            const leaderboard = await this.getLeaderboard(roomCode);
+            this.setState({
+                leaderboard: leaderboard
+            });
+            this.props.hideLoader();
+        } finally {
+            this.props.hideLoader();
+        }
     }
 
     getLeaderboard = async (roomCode: string): Promise<IParticipant[]> => {

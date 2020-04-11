@@ -264,6 +264,18 @@ namespace Quizzo.Api.Controllers
                 await _context.SaveChangesAsync();
             }
 
+        [HttpPost("{roomCode}/ReadyQuiz")]
+        public async Task<IActionResult> ReadyQuiz(string roomCode)
+        {
+            var quizRoom = await _context.QuizRooms.SingleAsync(q => q.RoomCode == roomCode);
+
+            if (!quizRoom.IsReady)
+            {
+                quizRoom.IsReady = true;
+                await _context.SaveChangesAsync();
+            }
+
+
             return Ok();
         }
 
