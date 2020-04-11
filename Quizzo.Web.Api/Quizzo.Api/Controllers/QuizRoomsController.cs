@@ -88,6 +88,37 @@ namespace Quizzo.Api.Controllers
             return Ok(new { quizRoom = quizRoomDto, questions });
         }
 
+        [HttpGet("GetQuizRoomForAdmin/{roomCode}/{adminCode}")]
+        public async Task<IActionResult> GetQuizRoomForAdmin(string roomCode, string adminCode)
+        {
+            var quizRoom = await _context.QuizRooms
+                .Include(q => q.Questions)
+                .ThenInclude(q => q.Answers)
+                .SingleOrDefaultAsync(q => q.RoomCode == roomCode && q.AdminCode == adminCode);
+
+            if (quizRoom == null)
+            {
+                return NotFound();
+            }
+
+            var questions = quizRoom.Questions
+                .Select(q => new QuestionDto()
+                {
+                    Id = q.Id,
+                    QuestionText = q.QuestionText,
+                    Answers = q.Answers.Select(a => new AnswerDto()
+                    {
+                        Id = a.Id,
+                        AnswerText = a.AnswerText,
+                        IsCorrect = a.IsCorrect
+                    }).ToList()
+                });
+
+            var quizRoomDto = _mapper.Map<QuizRoomDto>(quizRoom);
+
+            return Ok(new { quizRoom = quizRoomDto, questions });
+        }
+
         [HttpPut("{id}")]
         [ApiExplorerSettings(IgnoreApi = true)]
         public async Task<IActionResult> PutQuizRoom(Guid id, QuizRoom quizRoom)
@@ -118,7 +149,7 @@ namespace Quizzo.Api.Controllers
             return NoContent();
         }
 
-        [HttpPost("create")]
+        [HttpPost("Create")]
         public async Task<ActionResult<QuizRoom>> PostQuizRoom()
         {
             var quizRoom = new QuizRoom()
@@ -291,7 +322,7 @@ namespace Quizzo.Api.Controllers
             return Ok(solutions);
         }
 
-        [HttpGet("roomexists/{roomCode}")]
+        [HttpGet("RoomExists/{roomCode}")]
         public async Task<IActionResult> CheckRoomExists(string roomCode)
         {
             if (string.IsNullOrEmpty(roomCode))
