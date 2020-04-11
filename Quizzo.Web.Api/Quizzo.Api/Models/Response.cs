@@ -1,5 +1,4 @@
-﻿using System;
-using System.ComponentModel.DataAnnotations;
+﻿using System.ComponentModel.DataAnnotations;
 
 namespace Quizzo.Api.Models
 {
@@ -16,5 +15,7 @@ namespace Quizzo.Api.Models
         public virtual Answer Answer { get; set; }
 
         public long ResponseTime { get; set; }
+
+        public int Score { get; set; }
     }
 }
