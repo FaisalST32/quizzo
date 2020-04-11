@@ -227,20 +227,22 @@ namespace Quizzo.Api.Controllers
                 {
                     var participantQuestions = new List<int>();
 
-                    foreach (var response in item.Responses)
+                    foreach (var response in item.Responses.OrderBy(c => c.CreatedOnUtc))
                     {
                         var question = questions.Single(q => q.Id == response.QuestionId);
 
                         if (!participantQuestions.Any(q => q == response.QuestionId) && question.CorrectAnswerId == response.AnswerId)
                         {
-                            item.Score += points;
+                            response.Score += points;
 
                             var fastestResponseTime = responses.Where(r => r.QuestionId == response.QuestionId && r.AnswerId == question.CorrectAnswerId).Min(r => r.ResponseTime);
 
                             if (response.ResponseTime == fastestResponseTime)
                             {
-                                item.Score += points;
+                                response.Score += points;
                             }
+
+                            item.Score += response.Score;
 
                             participantQuestions.Add(response.QuestionId);
                         }
@@ -278,7 +280,6 @@ namespace Quizzo.Api.Controllers
                 await _context.SaveChangesAsync();
             }
 
-
             return Ok();
         }
 
@@ -306,8 +307,8 @@ namespace Quizzo.Api.Controllers
             }
 
             var solutions = new List<SolutionDto>();
-            var participant = await _context.Participants.Include(p => p.Responses).SingleAsync(p => p.Name.ToLower() == username.ToLower() && p.QuizRoom.Id == quizRoom.Id);
-            var questions = await _context.Questions.Include(q => q.CorrectAnswer).OrderBy(q => q.CreatedOnUtc).Where(q => q.QuizRoom.RoomCode == roomCode).ToListAsync();
+            var participant = await _context.Participants.Include(p => p.Responses).Select(p => new { p.Name, p.QuizRoomId, p.Responses }).SingleAsync(p => p.Name.ToLower() == username.ToLower() && p.QuizRoomId == quizRoom.Id);
+            var questions = await _context.Questions.Include(q => q.CorrectAnswer).Select(q => new { q.QuestionText, q.Id, q.QuizRoomId, q.CorrectAnswer }).OrderBy(q => q.Id).Where(q => q.QuizRoomId == quizRoom.Id).ToListAsync();
 
             foreach (var item in questions)
             {
@@ -316,19 +317,10 @@ namespace Quizzo.Api.Controllers
                 var solution = new SolutionDto()
                 {
                     QuestionText = item.QuestionText,
-                    CorrectAnswerText = item.CorrectAnswer.AnswerText,
-                    SelectedAnswerText = response != null ? item.CorrectAnswer.AnswerText : string.Empty
+                    CorrectAnswerText = item.CorrectAnswer?.AnswerText,
+                    SelectedAnswerText = response != null ? item.CorrectAnswer?.AnswerText : string.Empty,
+                    Score = response.Score
                 };
-
-                if (solution.CorrectAnswerText == solution.SelectedAnswerText)
-                {
-                    solution.Score += points;
-
-                    if (response != null && response.ResponseTime == _context.Responses.Where(q => q.QuestionId == response.QuestionId).Min(q => q.ResponseTime))
-                    {
-                        solution.Score += points;
-                    }
-                }
 
                 solutions.Add(solution);
             }
