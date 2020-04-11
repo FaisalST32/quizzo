@@ -124,7 +124,7 @@ namespace Quizzo.Api.Controllers
             var quizRoom = new QuizRoom()
             {
                 RoomCode = RandomString(6),
-                AdminCode = RandomString(8, true),
+                AdminCode = RandomString(4, true),
                 Name = $"Quizzo_{DateTime.UtcNow}", // some temporary name since we don't have a quiz name set in the app right now
             };
 
