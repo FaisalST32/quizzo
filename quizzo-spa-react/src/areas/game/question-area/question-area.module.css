@@ -3,6 +3,11 @@
     box-sizing: border-box;
 }
 
+.questionArea.optionSelected .option:hover:not(.selected) {
+    background-color: white;
+    cursor: auto;
+}
+
 .questionText {
     font-size: 3rem;
     color: purple;

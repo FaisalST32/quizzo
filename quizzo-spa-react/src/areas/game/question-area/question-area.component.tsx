@@ -12,6 +12,11 @@ type QuestionAreaProps = {
 
 
 const QuestionArea: FunctionComponent<QuestionAreaProps> = props => {
+    const questionAreaClasses = [classes.questionArea];
+    if (props.selectedOption) {
+        questionAreaClasses.push(classes.optionSelected);
+    }
+    
     const optionLabels = ['A', 'B', 'C', 'D'];
     const options = props.question?.answers.map((answer, i) => {
         const isSelected = props.selectedOption === answer.id;
@@ -30,7 +35,7 @@ const QuestionArea: FunctionComponent<QuestionAreaProps> = props => {
     return (
         <Fragment>
             <div className={classes.timer} style={{width: ((props.timer / config.questionTime) * 100).toString() + '%'}}></div>
-            <div className={classes.questionArea}>
+            <div className={questionAreaClasses.join(' ')}>
                 <div className={classes.questionText}>
                     <small>Q. </small>{props.question?.questionText}
                 </div>

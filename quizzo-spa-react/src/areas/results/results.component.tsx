@@ -100,9 +100,8 @@ class Results extends Component<any, IResultsState> {
         const resp = await axios.get<IParticipant[]>(
             `${config.apiUrl}QuizRooms/${roomCode}/GetLeaderboard`
         );
-        console.log(resp);
         const leaderboard = resp.data;
-        return leaderboard;
+        return leaderboard.sort((a, b) => a.rank - b.rank);
     };
 
     getParticipantResult = async (

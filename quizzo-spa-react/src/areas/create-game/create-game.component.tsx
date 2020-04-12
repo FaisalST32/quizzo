@@ -9,12 +9,14 @@ import axios from 'axios';
 import CreateGameInfo from './create-game-info/create-game-info.component';
 import FinishGameInfo from './finish-create-info/finish-game-info.component';
 import { IQuiz } from '../../interfaces/IQuiz';
+import QuestionArea from '../game/question-area/question-area.component';
 
 interface ICreateGameState {
     quizData: IQuiz;
     questions: IQuestion[];
     questionToAdd: IQuestion;
     addingQuestions: boolean;
+    currentQuestionIndex: number;
 }
 
 class CreateGame extends Component<any, ICreateGameState> {
@@ -52,6 +54,7 @@ class CreateGame extends Component<any, ICreateGameState> {
             questions: [],
             questionToAdd: this.emptyQuestion,
             addingQuestions: false,
+            currentQuestionIndex: 0
         };
     }
 
@@ -67,7 +70,7 @@ class CreateGame extends Component<any, ICreateGameState> {
 
             if (quizData.stoppedAtUtc) {
                 this.props.history.push(
-                    `results/${this.state.quizData.roomCode}/admin`
+                    `/results/${this.state.quizData.roomCode}/admin`
                 );
                 return;
             }
@@ -234,11 +237,26 @@ class CreateGame extends Component<any, ICreateGameState> {
             this.setState({
                 quizData: quizData,
             });
+            this.startProgressTimer();
             this.props.hideLoader();
         } catch (err) {
             this.props.hideLoader();
         }
     };
+
+    startProgressTimer = () => {
+        const interval = setInterval(() => {
+            if (this.state.currentQuestionIndex === this.state.questions.length - 1) {
+                clearInterval(interval);
+                return;
+            }
+            this.setState(currState => {
+                return {
+                    currentQuestionIndex: currState.currentQuestionIndex + 1
+                }
+            })
+        }, config.questionTime * 1000);
+    }
 
     onStopGame = async () => {
         if (this.state.quizData.stoppedAtUtc) {
@@ -282,6 +300,7 @@ class CreateGame extends Component<any, ICreateGameState> {
     };
 
     render() {
+
         let createGameArea = (
             <CreateGameInfo
                 roomCode={this.state.quizData.roomCode}
@@ -291,6 +310,7 @@ class CreateGame extends Component<any, ICreateGameState> {
 
         if (this.state.addingQuestions && !this.state.quizData.isReady) {
             let addedQuestions = null;
+
             if (this.state.questions && this.state.questions.length > 0) {
                 addedQuestions = this.state.questions.map((question, i) => {
                     return (
@@ -302,6 +322,7 @@ class CreateGame extends Component<any, ICreateGameState> {
                     );
                 });
             }
+            
             createGameArea = (
                 <React.Fragment>
                     <div className={classes.createGameHeader}>
@@ -339,20 +360,39 @@ class CreateGame extends Component<any, ICreateGameState> {
 
         if (this.state.quizData.isReady) {
             createGameArea = (
-                <FinishGameInfo
-                    adminCode={this.state.quizData.adminCode as number}
-                    roomCode={this.state.quizData.roomCode}
-                    startGame={this.onStartGame}
-                    stopGame={this.onStopGame}
-                    hasGameStarted={!!this.state.quizData.startedAtUtc}
-                />
+                <React.Fragment>
+                    <FinishGameInfo
+                        adminCode={this.state.quizData.adminCode as number}
+                        roomCode={this.state.quizData.roomCode}
+                        startGame={this.onStartGame}
+                        stopGame={this.onStopGame}
+                        hasGameStarted={!!this.state.quizData.startedAtUtc}
+                    />
+                </React.Fragment>
             );
+        }
+
+        let currentQuestion = null;
+
+        if (this.state.quizData.startedAtUtc) {
+            currentQuestion = (
+                <div className={classes.currentQuestion}>
+                    <div style={{ color: 'green', fontWeight: 'bold', fontSize: '2rem', marginBottom: '-50px', textAlign: 'center' }}>
+                        Current Question <small>({this.state.currentQuestionIndex + 1} of {this.state.questions.length})</small>
+                    </div>
+                    <QuestionArea questionNumber={0}
+                        selectOption={() => { }}
+                        question={this.state.questions[this.state.currentQuestionIndex]}
+                        selectedOption={'none'} timer={0} />
+                </div>
+            )
         }
 
         return (
             <div className={classes.createGame}>
                 <div className={classes.createGameContainer}>
                     {createGameArea}
+                    {currentQuestion}
                 </div>
             </div>
         );

@@ -47,6 +47,12 @@
     color: white;
 }
 
+.currentQuestion {
+    box-shadow: 0 0 5px rgba(0,0,0,0.2);
+    margin: 20px;
+    padding-top: 20px;
+}
+
 @media screen and (max-width: 991px) {
     .createGameContainer {
         border-radius: 0px;

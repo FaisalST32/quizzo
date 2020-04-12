@@ -26,8 +26,19 @@ const FinishGameInfo: FunctionComponent<FinishGameInfoProps> = (props) => {
         navigator.clipboard.writeText(getAdminCode());
     };
 
-    return (
-        <div className={classes.finishGameInfo}>
+    let gameAction = <button onClick={props.startGame} className="button success-button large-button">
+                        Start Game
+                    </button>
+
+    let actionInstructions = <p>
+        The game has not started yet. Once all the participants are
+                                ready, you can press the <strong>Start Game</strong> button
+                                to begin.
+                            </p>
+    
+
+    let adminInfo: any  = (
+        <React.Fragment>
             <p>Your game is now ready.</p>
 
             <div className={classes.inviteArea}>
@@ -43,8 +54,7 @@ const FinishGameInfo: FunctionComponent<FinishGameInfoProps> = (props) => {
                 </button>
             </div>
             <p>
-                Copy the invite link to share with your friends or simply share
-                the invite code{' '}
+                Copy the invite link to share with your friends or simply share the invite code{' '}
                 <span className={classes.roomCode}>{props.roomCode}</span>
             </p>
             <p>
@@ -66,35 +76,28 @@ const FinishGameInfo: FunctionComponent<FinishGameInfoProps> = (props) => {
                     Copy
                 </button>
             </div>
-            {props.hasGameStarted ? (
-                <p>
-                    The game has started. Once all the participants have
-                    finished, you can press the <strong>Stop Game</strong>{' '}
-                    button to calculate the results.
-                </p>
-            ) : (
-                <p>
-                    The game has not started yet. Once all the participants are
-                    ready, you can press the <strong>Start Game</strong> button
-                    to begin.
-                </p>
-            )}
-            <div className={classes.gameControlsArea}>
-                {props.hasGameStarted ? (
-                    <button
-                        onClick={props.stopGame}
-                        className="button danger-button large-button"
-                    >
+        </React.Fragment>
+    )
+
+    if (props.hasGameStarted) {
+        gameAction = <button onClick={props.stopGame} className="button danger-button large-button">
                         Stop Game
                     </button>
-                ) : (
-                    <button
-                        onClick={props.startGame}
-                        className="button success-button large-button"
-                    >
-                        Start Game
-                    </button>
-                )}
+
+        actionInstructions = <p>
+                                The game has started. Once all the participants have
+                                finished, you can press the <strong>Stop Game</strong>{' '}
+                                button to calculate the results.
+                            </p>
+        adminInfo = null;
+    }
+
+    return (
+        <div className={classes.finishGameInfo}>
+            {adminInfo}
+            {actionInstructions}
+            <div className={classes.gameControlsArea}>
+                {gameAction}
             </div>
         </div>
     );
