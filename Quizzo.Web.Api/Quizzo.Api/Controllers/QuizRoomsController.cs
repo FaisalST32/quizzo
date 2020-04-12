@@ -70,7 +70,7 @@ namespace Quizzo.Api.Controllers
 
             var questionsAlreadyRespondedTo = await GetQuestionsAlreadyRespondedTo(roomCode, username);
 
-            var questions = quizRoom.Questions
+            var questions = quizRoom.Questions.OrderBy(q => q.Id)
                 .Where(q => !questionsAlreadyRespondedTo.Contains(q.Id))
                 .Select(q => new QuestionDto()
                 {
@@ -101,7 +101,7 @@ namespace Quizzo.Api.Controllers
                 return NotFound();
             }
 
-            var questions = quizRoom.Questions
+            var questions = quizRoom.Questions.OrderBy(q => q.Id)
                 .Select(q => new QuestionDto()
                 {
                     Id = q.Id,

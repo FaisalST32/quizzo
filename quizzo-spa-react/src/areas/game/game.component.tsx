@@ -28,7 +28,7 @@ class Game extends Component<any, GameState> {
             currentOptionSelected: '',
             gameOver: false,
             username: '',
-            gameStarted: false
+            gameStarted: false,
         };
     }
 
@@ -42,7 +42,7 @@ class Game extends Component<any, GameState> {
         // TODO: add logic to select current question based on time elapsed
 
         const gameStarted = !!gameData.startedAtUtc;
-        const gameOver = !!gameData.stoppedAtUtc || !gameData.questions?.length
+        const gameOver = !!gameData.stoppedAtUtc || !gameData.questions?.length;
         const questions = gameData.questions as IQuestion[];
         this.setState({
             gameData: gameData,
@@ -51,14 +51,16 @@ class Game extends Component<any, GameState> {
             currentTimer: config.questionTime,
             username: userName,
             gameStarted: gameStarted,
-            gameOver: gameOver
+            gameOver: gameOver,
         });
 
         this.checkIfGameStarted(roomCode);
-        // this.beginTimer();
     };
 
-    getGameData = async (roomCode: string, userName: string): Promise<IQuiz> => {
+    getGameData = async (
+        roomCode: string,
+        userName: string
+    ): Promise<IQuiz> => {
         const resp = await axios.get<{
             quizRoom: IQuiz;
             questions: IQuestion[];
@@ -129,7 +131,7 @@ class Game extends Component<any, GameState> {
         this.setState((currState) => {
             const questions = currState.gameData?.questions || [];
             if (!questions.length) {
-                return {...currState};
+                return { ...currState };
             }
             return {
                 currentQuestion: questions[currentQuestionIndex + 1],

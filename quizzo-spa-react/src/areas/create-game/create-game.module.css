@@ -1,79 +1,80 @@
 .createGame {
-  background-image: linear-gradient(
-      to right,
-      rgba(128, 0, 128, 0.548),
-      rgba(128, 0, 128, 0.486)
-    ),
-    url("../../assets/images/game-bg.jpg");
-  background-position: center;
-  background-size: cover;
-  background-attachment: fixed;
-  height: 100vh;
-  width: 100vw;
-  overflow-y: scroll;
+    background-image: linear-gradient(
+            to right,
+            rgba(128, 0, 128, 0.548),
+            rgba(128, 0, 128, 0.486)
+        ),
+        url('../../assets/images/game-bg.jpg');
+    background-position: center;
+    background-size: cover;
+    background-attachment: fixed;
+    height: 100vh;
+    width: 100vw;
+    overflow-y: scroll;
 }
 
 .createGameContainer {
-  background: white;
-  border-radius: 20px;
-  min-height: 60vh;
-  top: 10vh;
-  left: 50vw;
-  position: relative;
-  width: 20vw;
-  min-width: 1000px;
-  box-sizing: border-box;
-  box-shadow: 0 0 40px rgba(0, 0, 0, 0.2);
-  transform: translateX(-50%);
-  overflow: hidden;
-  margin-bottom: 100px;
+    background: white;
+    border-radius: 20px;
+    min-height: 60vh;
+    top: 10vh;
+    left: 50vw;
+    position: relative;
+    width: 20vw;
+    min-width: 1000px;
+    box-sizing: border-box;
+    box-shadow: 0 0 40px rgba(0, 0, 0, 0.2);
+    transform: translateX(-50%);
+    overflow: hidden;
+    margin-bottom: 100px;
 }
 
 .createGameHeader {
-  padding: 20px 40px;
-  font-size: 3rem;
-  box-sizing: border-box;
-  background: purple;
-  color: white;
-  width: 100%;
-}
-
-.createGameContent {
-  padding: 20px 40px;
-}
-
-.createGameHeader .finishButton {
-  float: right;
-  color: white;
-}
-
-@media screen and (max-width: 991px) {
-  .createGameContainer {
-    border-radius: 0px;
-    top: 0vh;
-    position: relative;
-    min-width: 100vw;
-    box-sizing: border-box;
-    box-shadow: none;
-    overflow: hidden;
-    margin-bottom: 100px;
-  }
-  .createGameContent {
-    padding: 10px 20px;
-    margin: 0 5px;
-  }
-
-  .createGameHeader {
     padding: 20px 40px;
-    font-size: 2rem;
+    font-size: 3rem;
     box-sizing: border-box;
     background: purple;
     color: white;
     width: 100%;
-  }
+}
 
-  .createGameHeader .finishButton {
-    display: block;
-    float: none;
-  }
+.createGameContent {
+    padding: 20px 40px;
+}
+
+.createGameHeader .finishButton {
+    float: right;
+    color: white;
+}
+
+@media screen and (max-width: 991px) {
+    .createGameContainer {
+        border-radius: 0px;
+        top: 0vh;
+        position: relative;
+        min-width: 100vw;
+        box-sizing: border-box;
+        box-shadow: none;
+        overflow: hidden;
+        margin-bottom: 100px;
+    }
+
+    .createGameContent {
+        padding: 10px 20px;
+        margin: 0 5px;
+    }
+
+    .createGameHeader {
+        padding: 20px 40px;
+        font-size: 2rem;
+        box-sizing: border-box;
+        background: purple;
+        color: white;
+        width: 100%;
+    }
+
+    .createGameHeader .finishButton {
+        display: block;
+        float: none;
+    }
 }
