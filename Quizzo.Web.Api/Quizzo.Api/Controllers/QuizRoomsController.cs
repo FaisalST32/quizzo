@@ -296,6 +296,25 @@ namespace Quizzo.Api.Controllers
             return Ok(leaderboard);
         }
 
+        [HttpGet("{roomCode}/{username}/GetParticipantResult")]
+        public async Task<IActionResult> GetParticipantResult(string roomCode, string username)
+        {
+            var participant = await _context.Participants.FirstOrDefaultAsync(p => p.QuizRoom.RoomCode.ToLower() == roomCode.ToLower() && p.Name.ToLower() == username.ToLower());
+
+            if (participant == null)
+            {
+                return NotFound();
+            }
+
+            var participantResult = new ParticipantDto()
+            {
+                Score = participant.Score,
+                Rank = participant.Rank
+            };
+
+            return Ok(participantResult);
+        }
+
         [HttpGet("{roomCode}/{username}/GetSolution")]
         public async Task<IActionResult> GetSolution(string roomCode, string username)
         {

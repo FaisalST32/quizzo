@@ -17,6 +17,7 @@ const FinishGameInfo: FunctionComponent<FinishGameInfoProps> = (props) => {
     const onCopyCode = () => {
         navigator.clipboard.writeText(getShareCode());
     };
+
     return (
         <div className={classes.finishGameInfo}>
             <p>Your game is now ready</p>

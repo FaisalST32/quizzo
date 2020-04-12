@@ -1,146 +1,141 @@
 .results {
-  background-image: linear-gradient(
-      to right,
-      rgba(255, 69, 0, 0.7),
-      rgb(255, 88, 26, 0.7)
-    ),
-    url("../../assets/images/game-bg.jpg");
-  background-position: center;
-  background-size: cover;
-  background-attachment: fixed;
-  height: 100vh;
-  width: 100vw;
-  overflow-y: scroll;
+    background-image: linear-gradient(
+            to right,
+            rgba(255, 69, 0, 0.7),
+            rgb(255, 88, 26, 0.7)
+        ),
+        url('../../assets/images/game-bg.jpg');
+    background-position: center;
+    background-size: cover;
+    background-attachment: fixed;
+    height: 100vh;
+    width: 100vw;
+    overflow-y: scroll;
 }
 
 .resultsContainer {
-  background: white;
-  border-radius: 20px;
-  min-height: 60vh;
-  top: 10vh;
-  left: 50vw;
-  position: relative;
-  width: 20vw;
-  min-width: 1000px;
-  box-sizing: border-box;
-  box-shadow: 0 0 40px rgba(0, 0, 0, 0.2);
-  transform: translateX(-50%);
-  overflow: hidden;
-  padding: 60px 80px;
-  margin-bottom: 100px;
+    background: white;
+    border-radius: 20px;
+    min-height: 60vh;
+    top: 10vh;
+    left: 50vw;
+    position: relative;
+    width: 20vw;
+    min-width: 1000px;
+    box-sizing: border-box;
+    box-shadow: 0 0 40px rgba(0, 0, 0, 0.2);
+    transform: translateX(-50%);
+    overflow: hidden;
+    padding: 60px 80px;
+    margin-bottom: 100px;
 }
 
 .resultsHeader {
-  font-size: 2rem;
-  text-align: center;
-  color: #d31027;
+    font-size: 2rem;
+    text-align: center;
+    color: #d31027;
 }
 .resultsHeader span {
-  font-size: 3rem;
-  font-weight: bolder;
-  margin-top: 20px;
+    font-size: 3rem;
+    font-weight: bolder;
+    margin-top: 20px;
 }
 
 .resultsButtons {
-  display: flex;
-  flex-flow: column nowrap;
-  justify-content: space-between;
+    display: flex;
+    flex-flow: column nowrap;
+    justify-content: space-between;
 }
 .resultsButtons > button {
-  margin-top: 20px;
+    margin-top: 20px;
 }
 
 .resultsGif {
-  height: 400px;
-  margin-top: 20px;
+    height: 400px;
+    margin-top: 20px;
 }
 
 .resultsListTable {
-  font-size: 1.5rem;
-  /* color: #d31027; */
-  width: 100%;
-  border-collapse: collapse;
-  border: solid 1px black;
-}
-
-.resultsListTable thead {
-  /* background-color: #d31027;
-  color: white; */
-}
-
-.resultsListTable td,
-.resultsListTable th {
-  padding: 10px 20px;
-  text-align: left;
-}
-
-.resultsListTable tbody tr[data-rank="1"] {
-  background-color: gold;
-  color: black;
-}
-.resultsListTable tbody tr[data-rank="2"] {
-  background-color: #D3D3D3;
-  color: black;
-}
-.resultsListTable tbody tr[data-rank="3"] {
-  background-color: #cd7f32;
-  color: white;
-}
-
-.resultsActions {
-  margin-top: 20px;
-}
-
-.resultsActionButtons {
-  display: flex;
-  flex-flow: row wrap;
-}
-
-.resultsActionButtons button {
-  width: calc(50% - 20px);
-  margin: 0 10px;
-}
-
-.yourScore {
-  text-align: center;
-  font-size: 1.4rem;
-}
-
-@media screen and (max-width: 991px) {
-  .resultsContainer {
-    top: 5vh;
-    min-width: 90vw;
-    margin-bottom: 200px;
-    padding: 40px 20px;
-  }
-  .resultsHeader {
     font-size: 1.5rem;
-  }
-  .resultsHeader span {
-    font-size: 2rem;
-  }
-
-  .resultsListTable {
-    font-size: 1rem;
     /* color: #d31027; */
     width: 100%;
     border-collapse: collapse;
     border: solid 1px black;
-  }
+}
 
-  .resultsActionButtons {
-    display: flex;
-    flex-flow: column wrap;
-  }
+.resultsListTable td,
+.resultsListTable th {
+    padding: 10px 20px;
+    text-align: left;
+}
 
-  .resultsActionButtons button {
-    width: 100%;
-    margin: 10px 0px;
-  }
+.resultsListTable tbody tr[data-rank='1'] {
+    background-color: gold;
+    color: black;
+}
+.resultsListTable tbody tr[data-rank='2'] {
+    background-color: #d3d3d3;
+    color: black;
+}
+.resultsListTable tbody tr[data-rank='3'] {
+    background-color: #cd7f32;
+    color: white;
+}
 
-  .resultsGif {
-    width: 100%;
-    height: auto;
+.resultsActions {
     margin-top: 20px;
-  }
+}
+
+.resultsActionButtons {
+    display: flex;
+    flex-flow: row wrap;
+}
+
+.resultsActionButtons button {
+    width: calc(50% - 20px);
+    margin: 0 10px;
+}
+
+.yourScore {
+    text-align: center;
+    font-size: 1.4rem;
+}
+
+@media screen and (max-width: 991px) {
+    .resultsContainer {
+        top: 5vh;
+        min-width: 90vw;
+        margin-bottom: 200px;
+        padding: 40px 20px;
+    }
+    .resultsHeader {
+        font-size: 1.5rem;
+    }
+    .resultsHeader span {
+        font-size: 2rem;
+    }
+
+    .resultsListTable {
+        font-size: 1rem;
+        /* color: #d31027; */
+        width: 100%;
+        border-collapse: collapse;
+        border: solid 1px black;
+    }
+
+    .resultsActionButtons {
+        display: flex;
+        flex-flow: column wrap;
+    }
+
+    .resultsActionButtons button {
+        width: 100%;
+        margin: 10px 0px;
+    }
+
+    .resultsGif {
+        width: 100%;
+        height: auto;
+        margin-top: 20px;
+    }
 }
