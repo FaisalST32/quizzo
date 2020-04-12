@@ -81,7 +81,7 @@ namespace Quizzo.Api.Controllers
 
             var quizRoom = await _context.QuizRooms.Include(q => q.Participants).SingleAsync(q => q.RoomCode == roomCode);
 
-            if (quizRoom.Participants.Any(p => p.Name.ToLower() == participant.Name.ToLower()))
+            if (participant.Name.ToLower() == "admin" || quizRoom.Participants.Any(p => p.Name.ToLower() == participant.Name.ToLower()))
             {
                 return Ok("exists");
             }
