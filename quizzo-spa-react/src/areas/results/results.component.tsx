@@ -243,7 +243,7 @@ class Results extends Component<any, IResultsState> {
                                             </div>
                                         );
                                     })}
-                                </span>
+                                </span><br />
                                 <img
                                     className={classes.resultsGif}
                                     alt="victory"
