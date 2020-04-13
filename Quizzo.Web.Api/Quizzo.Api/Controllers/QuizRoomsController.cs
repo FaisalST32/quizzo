@@ -326,7 +326,7 @@ namespace Quizzo.Api.Controllers
             }
 
             var solutions = new List<SolutionDto>();
-            var participant = await _context.Participants.Include(p => p.Responses).Select(p => new { p.Name, p.QuizRoomId, p.Responses }).SingleAsync(p => p.Name.ToLower() == username.ToLower() && p.QuizRoomId == quizRoom.Id);
+            var participant = await _context.Participants.Include(p => p.Responses).ThenInclude(r => r.Answer).Select(p => new { p.Name, p.QuizRoomId, p.Responses }).SingleAsync(p => p.Name.ToLower() == username.ToLower() && p.QuizRoomId == quizRoom.Id);
             var questions = await _context.Questions.Include(q => q.CorrectAnswer).Select(q => new { q.QuestionText, q.Id, q.QuizRoomId, q.CorrectAnswer }).OrderBy(q => q.Id).Where(q => q.QuizRoomId == quizRoom.Id).ToListAsync();
 
             foreach (var item in questions)
@@ -337,7 +337,7 @@ namespace Quizzo.Api.Controllers
                 {
                     QuestionText = item.QuestionText,
                     CorrectAnswerText = item.CorrectAnswer?.AnswerText,
-                    SelectedAnswerText = response != null ? item.CorrectAnswer?.AnswerText : string.Empty,
+                    SelectedAnswerText = response != null ? response.Answer?.AnswerText : string.Empty,
                     Score = response.Score
                 };
 
